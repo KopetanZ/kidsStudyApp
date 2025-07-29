@@ -4,42 +4,51 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   
+  // Add security headers
+  const response = NextResponse.next();
+  
+  response.headers.set('X-DNS-Prefetch-Control', 'on');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
+  
   // Handle root path
   if (url.pathname === '/') {
-    return NextResponse.next();
+    return response;
   }
   
-  // Handle subject pages
+  // Handle subject pages - ensure proper routing
   if (url.pathname.startsWith('/subject/')) {
-    return NextResponse.next();
+    const id = url.pathname.split('/subject/')[1];
+    if (id && !id.includes('/')) {
+      return response;
+    }
   }
   
-  // Handle level pages
+  // Handle level pages - ensure proper routing
   if (url.pathname.startsWith('/level/')) {
-    return NextResponse.next();
+    const id = url.pathname.split('/level/')[1];
+    if (id && !id.includes('/')) {
+      return response;
+    }
   }
   
-  // Handle public assets
-  if (url.pathname.startsWith('/manifest.json') || 
-      url.pathname.startsWith('/sw.js') ||
-      url.pathname.startsWith('/icon') ||
-      url.pathname.endsWith('.svg') ||
-      url.pathname.endsWith('.png') ||
-      url.pathname.endsWith('.ico')) {
-    return NextResponse.next();
-  }
-  
-  // Handle Next.js internal routes
+  // Handle static assets
   if (url.pathname.startsWith('/_next') || 
-      url.pathname.startsWith('/api')) {
-    return NextResponse.next();
+      url.pathname.startsWith('/api') ||
+      url.pathname.includes('.') ||
+      url.pathname === '/manifest.json' ||
+      url.pathname === '/sw.js' ||
+      url.pathname === '/favicon.ico') {
+    return response;
   }
   
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };

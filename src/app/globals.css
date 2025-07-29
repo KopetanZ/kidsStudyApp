@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
@@ -40,7 +42,7 @@ body {
 .subject-card {
   @apply bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl 
          transform hover:scale-105 transition-all duration-300 border-2 border-transparent 
-         hover:border-primary cursor-pointer;
+         hover:border-green-500 cursor-pointer;
 }
 
 .level-badge {
