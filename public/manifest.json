@@ -1,0 +1,64 @@
+{
+  "name": "がくしゅうアプリ - 小学生向け学習アプリ",
+  "short_name": "がくしゅうアプリ",
+  "description": "小学生低学年向けの算数・国語・英語学習アプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#e0f2fe",
+  "theme_color": "#22c55e",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["education", "kids", "learning"],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "算数",
+      "short_name": "算数",
+      "description": "算数の問題を解く",
+      "url": "/subject/math",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "国語",
+      "short_name": "国語",
+      "description": "ひらがな・カタカナの練習",
+      "url": "/subject/japanese",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "英語",
+      "short_name": "英語",
+      "description": "アルファベットと英単語を学ぶ",
+      "url": "/subject/english",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

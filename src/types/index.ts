@@ -1,0 +1,89 @@
+export interface Subject {
+  id: string;
+  name: string;
+  emoji: string;
+  color: string;
+  description: string;
+}
+
+export interface Level {
+  id: string;
+  subjectId: string;
+  name: string;
+  description: string;
+  difficulty: number;
+  requiredPoints: number;
+  isUnlocked: boolean;
+}
+
+export interface Question {
+  id: string;
+  type: 'math' | 'japanese' | 'english';
+  subtype: string;
+  question: string;
+  options?: string[];
+  correctAnswer: string;
+  visualAid?: VisualAid;
+  points: number;
+}
+
+export interface VisualAid {
+  type: 'dots' | 'image' | 'text';
+  content: string | number;
+  position?: 'left' | 'right' | 'top' | 'bottom';
+}
+
+export interface UserProgress {
+  totalPoints: number;
+  completedLevels: string[];
+  currentLevel: Record<string, string>;
+  achievements: string[];
+  streaks: Record<string, number>;
+}
+
+export interface GameSession {
+  id: string;
+  subjectId: string;
+  levelId: string;
+  questions: Question[];
+  currentQuestionIndex: number;
+  score: number;
+  correctAnswers: number;
+  startTime: Date;
+  endTime?: Date;
+  completed: boolean;
+}
+
+export interface SoundEffect {
+  type: 'correct' | 'incorrect' | 'celebration' | 'click';
+  url: string;
+}
+
+// Math specific types
+export interface MathProblem {
+  operation: '+' | '-' | '×' | '÷';
+  operand1: number;
+  operand2: number;
+  result: number;
+  showDots?: boolean;
+  showPlaceholder?: boolean;
+}
+
+// Japanese specific types
+export interface JapaneseCharacter {
+  character: string;
+  reading: string;
+  type: 'hiragana' | 'katakana';
+  strokeOrder?: string[];
+  image?: string;
+}
+
+// English specific types
+export interface EnglishLetter {
+  letter: string;
+  uppercase: string;
+  lowercase: string;
+  pronunciation: string;
+  image?: string;
+  word?: string;
+}
