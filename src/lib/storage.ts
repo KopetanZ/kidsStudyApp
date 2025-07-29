@@ -1,4 +1,5 @@
-import { UserProgress } from '@/types';
+import { UserProgress, Badge } from '@/types';
+import { GamificationManager } from './gamification';
 
 const STORAGE_KEY = 'kids-study-progress';
 
@@ -100,8 +101,100 @@ export class StorageManager {
         math: 0,
         japanese: 0,
         english: 0
-      }
+      },
+      badges: [],
+      experiencePoints: 0,
+      playerLevel: 1,
+      dailyGoals: GamificationManager.generateDailyGoals(),
+      weeklyStats: GamificationManager.createWeeklyStats()
     };
+  }
+
+  static addExperience(xp: number): UserProgress {
+    const progress = this.getProgress();
+    const oldLevel = progress.playerLevel;
+    progress.experiencePoints += xp;
+    progress.playerLevel = GamificationManager.calculatePlayerLevel(progress.experiencePoints);
+    
+    // Check for level up rewards
+    if (progress.playerLevel > oldLevel) {
+      const rewards = GamificationManager.getLevelUpRewards(progress.playerLevel);
+      progress.totalPoints += rewards.points;
+      progress.badges.push(...rewards.badges);
+    }
+    
+    this.saveProgress(progress);
+    return progress;
+  }
+
+  static addBadge(badge: Badge): UserProgress {
+    const progress = this.getProgress();
+    const existingBadge = progress.badges.find(b => b.id === badge.id);
+    if (!existingBadge) {
+      progress.badges.push({ ...badge, unlockedAt: new Date() });
+    }
+    this.saveProgress(progress);
+    return progress;
+  }
+
+  static updateDailyGoals(action: string, amount: number = 1): UserProgress {
+    const progress = this.getProgress();
+    progress.dailyGoals = GamificationManager.updateDailyGoals(
+      progress.dailyGoals, 
+      action, 
+      amount
+    );
+    
+    // Award points for completed goals
+    progress.dailyGoals.forEach(goal => {
+      if (goal.completed && goal.current === goal.target) {
+        progress.totalPoints += goal.reward;
+        progress.experiencePoints += goal.reward / 2;
+      }
+    });
+    
+    this.saveProgress(progress);
+    return progress;
+  }
+
+  static updateWeeklyStats(data: {
+    questionsAnswered?: number;
+    correctAnswers?: number;
+    timeSpent?: number;
+    subject?: string;
+    streak?: number;
+  }): UserProgress {
+    const progress = this.getProgress();
+    progress.weeklyStats = GamificationManager.updateWeeklyStats(
+      progress.weeklyStats, 
+      data
+    );
+    this.saveProgress(progress);
+    return progress;
+  }
+
+  static resetDailyGoals(): UserProgress {
+    const progress = this.getProgress();
+    progress.dailyGoals = GamificationManager.generateDailyGoals();
+    this.saveProgress(progress);
+    return progress;
+  }
+
+  static checkAndAwardBadges(action: string, data?: unknown): UserProgress {
+    const progress = this.getProgress();
+    const newBadges = GamificationManager.checkBadgeUnlock(progress, action, data);
+    
+    newBadges.forEach(badge => {
+      progress.badges.push({ ...badge, unlockedAt: new Date() });
+      // Award bonus XP for badge unlock
+      progress.experiencePoints += 25;
+    });
+    
+    if (newBadges.length > 0) {
+      this.saveProgress(progress);
+    }
+    
+    return progress;
   }
 }
 

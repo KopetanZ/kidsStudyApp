@@ -1,17 +1,17 @@
-import { Question, MathProblem } from '@/types';
+import { Question } from '@/types';
 
 export class MathQuestionGenerator {
   static generateAdditionLevel1(): Question[] {
     const questions: Question[] = [];
     
-    // Generate 10 addition problems with visual dots
-    for (let i = 0; i < 10; i++) {
+    // Generate 15 addition problems with visual dots (increased from 10)
+    for (let i = 0; i < 15; i++) {
       const num1 = Math.floor(Math.random() * 5) + 1; // 1-5
       const num2 = Math.floor(Math.random() * 5) + 1; // 1-5
       const result = num1 + num2;
       
-      // Sometimes use placeholder in different positions
-      const placeholderPos = Math.random() < 0.3 ? (Math.random() < 0.5 ? 'left' : 'result') : 'none';
+      // More variety in placeholder positions
+      const placeholderPos = Math.random() < 0.4 ? (Math.random() < 0.33 ? 'left' : (Math.random() < 0.5 ? 'right' : 'result')) : 'result';
       
       let questionText = '';
       let correctAnswer = '';
@@ -19,26 +19,29 @@ export class MathQuestionGenerator {
       if (placeholderPos === 'left') {
         questionText = `〇 + ${num2} = ${result}`;
         correctAnswer = num1.toString();
-      } else if (placeholderPos === 'result') {
-        questionText = `${num1} + ${num2} = 〇`;
-        correctAnswer = result.toString();
+      } else if (placeholderPos === 'right') {
+        questionText = `${num1} + 〇 = ${result}`;
+        correctAnswer = num2.toString();
       } else {
         questionText = `${num1} + ${num2} = 〇`;
         correctAnswer = result.toString();
       }
 
+      // Add encouraging emoji for very easy problems
+      const difficultyEmoji = result <= 6 ? '🌟' : result <= 8 ? '⭐' : '🏆';
+
       questions.push({
         id: `math-add-1-${i}`,
         type: 'math',
         subtype: 'addition',
-        question: questionText,
+        question: `${difficultyEmoji} ${questionText}`,
         correctAnswer,
         visualAid: {
           type: 'dots',
-          content: placeholderPos === 'left' ? num2 : num1,
+          content: placeholderPos === 'left' ? num2 : placeholderPos === 'right' ? num1 : Math.min(num1, num2),
           position: 'top'
         },
-        points: 10
+        points: result <= 6 ? 8 : result <= 8 ? 10 : 12 // Variable points based on difficulty
       });
     }
 
@@ -48,12 +51,14 @@ export class MathQuestionGenerator {
   static generateAdditionLevel2(): Question[] {
     const questions: Question[] = [];
     
-    for (let i = 0; i < 10; i++) {
+    // Generate 12 harder addition problems (increased from 10)
+    for (let i = 0; i < 12; i++) {
       const num1 = Math.floor(Math.random() * 10) + 1; // 1-10
       const num2 = Math.floor(Math.random() * 10) + 1; // 1-10
       const result = num1 + num2;
       
-      const placeholderPos = Math.random() < 0.2 ? 'left' : 'result';
+      // Add more variety in placeholder positions
+      const placeholderPos = Math.random() < 0.3 ? 'left' : Math.random() < 0.5 ? 'right' : 'result';
       
       let questionText = '';
       let correctAnswer = '';
@@ -61,18 +66,30 @@ export class MathQuestionGenerator {
       if (placeholderPos === 'left') {
         questionText = `〇 + ${num2} = ${result}`;
         correctAnswer = num1.toString();
+      } else if (placeholderPos === 'right') {
+        questionText = `${num1} + 〇 = ${result}`;
+        correctAnswer = num2.toString();
       } else {
         questionText = `${num1} + ${num2} = 〇`;
         correctAnswer = result.toString();
       }
 
+      // Difficulty-based emoji and points
+      const difficultyEmoji = result <= 10 ? '⭐' : result <= 15 ? '🏆' : '💫';
+      const points = result <= 10 ? 12 : result <= 15 ? 15 : 18;
+
       questions.push({
         id: `math-add-2-${i}`,
         type: 'math',
         subtype: 'addition',
-        question: questionText,
+        question: `${difficultyEmoji} ${questionText}`,
         correctAnswer,
-        points: 15
+        visualAid: {
+          type: 'dots',
+          content: Math.min(num1, num2, 8), // Show dots for smaller number, max 8
+          position: 'top'
+        },
+        points
       });
     }
 
@@ -103,12 +120,13 @@ export class MathQuestionGenerator {
   static generateSubtractionLevel1(): Question[] {
     const questions: Question[] = [];
     
-    for (let i = 0; i < 10; i++) {
-      const result = Math.floor(Math.random() * 5) + 1; // 1-5
+    // Generate 12 subtraction problems (increased from 10)
+    for (let i = 0; i < 12; i++) {
+      const result = Math.floor(Math.random() * 8) + 1; // 1-8
       const num2 = Math.floor(Math.random() * result) + 1; // 1 to result
       const num1 = result + num2;
       
-      const placeholderPos = Math.random() < 0.3 ? 'left' : 'result';
+      const placeholderPos = Math.random() < 0.3 ? 'left' : Math.random() < 0.6 ? 'right' : 'result';
       
       let questionText = '';
       let correctAnswer = '';
@@ -116,23 +134,30 @@ export class MathQuestionGenerator {
       if (placeholderPos === 'left') {
         questionText = `〇 - ${num2} = ${result}`;
         correctAnswer = num1.toString();
+      } else if (placeholderPos === 'right') {
+        questionText = `${num1} - 〇 = ${result}`;
+        correctAnswer = num2.toString();
       } else {
         questionText = `${num1} - ${num2} = 〇`;
         correctAnswer = result.toString();
       }
 
+      // Add difficulty-based emoji and points
+      const difficultyEmoji = num1 <= 8 ? '🌟' : num1 <= 12 ? '⭐' : '🏆';
+      const points = num1 <= 8 ? 12 : num1 <= 12 ? 15 : 18;
+
       questions.push({
         id: `math-sub-1-${i}`,
         type: 'math',
         subtype: 'subtraction',
-        question: questionText,
+        question: `${difficultyEmoji} ${questionText}`,
         correctAnswer,
         visualAid: {
           type: 'dots',
-          content: num1,
+          content: Math.min(num1, 10), // Visual aid for minuend, max 10
           position: 'top'
         },
-        points: 15
+        points
       });
     }
 

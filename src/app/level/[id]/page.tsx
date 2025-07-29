@@ -7,8 +7,9 @@ import { JapaneseQuestionGenerator, generateJapaneseVisual } from '@/lib/japanes
 import { EnglishQuestionGenerator, generateEnglishVisual } from '@/lib/english-generator';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
+import { VisualEffects } from '@/lib/visual-effects';
 import { Question, GameSession, UserProgress } from '@/types';
-import { ArrowLeft, CheckCircle, XCircle, Star } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Star, Award, Zap } from 'lucide-react';
 import DrawingCanvas from '@/components/DrawingCanvas';
 
 export default function LevelPage() {
@@ -25,6 +26,11 @@ export default function LevelPage() {
   const [soundManager, setSoundManager] = useState<SoundManager | null>(null);
   const [inputError, setInputError] = useState(false);
   const [showDrawingCanvas, setShowDrawingCanvas] = useState(false);
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
+  const [showXPGain, setShowXPGain] = useState(false);
+  const [xpGained, setXPGained] = useState(0);
+  const [_levelUpOccurred, setLevelUpOccurred] = useState(false);
+  const [_newBadges, setNewBadges] = useState<string[]>([]);
 
   useEffect(() => {
     const initializeLevel = async () => {
@@ -96,16 +102,100 @@ export default function LevelPage() {
     };
     setSession(updatedSession);
 
-    // Update progress
     if (correct) {
-      const newProgress = StorageManager.addPoints(currentQuestion.points);
+      // Update consecutive correct count
+      const newConsecutive = consecutiveCorrect + 1;
+      setConsecutiveCorrect(newConsecutive);
+
+      // Calculate XP gain with bonuses
+      let xpGain = currentQuestion.points;
+      if (newConsecutive >= 3) xpGain += 5; // Bonus for streak
+      if (newConsecutive >= 5) xpGain += 10; // Bigger bonus for longer streak
+      
+      setXPGained(xpGain);
+      setShowXPGain(true);
+
+      // Update progress with enhanced rewards
+      const oldProgress = StorageManager.getProgress();
+      const oldLevel = oldProgress.playerLevel;
+      
+      // Add points and XP
+      let newProgress = StorageManager.addPoints(currentQuestion.points);
+      newProgress = StorageManager.addExperience(xpGain);
+      
+      // Update daily goals
+      newProgress = StorageManager.updateDailyGoals('answer_question', 1);
+      newProgress = StorageManager.updateDailyGoals('earn_points', currentQuestion.points);
+      
+      // Check for badges
+      newProgress = StorageManager.checkAndAwardBadges('first_question', { 
+        subject: session.subjectId 
+      });
+      
+      // Check for perfect score badge
+      if (newConsecutive >= 10) {
+        newProgress = StorageManager.checkAndAwardBadges('perfect_score', { 
+          consecutiveCorrect: newConsecutive 
+        });
+      }
+
+      // Check for level up
+      if (newProgress.playerLevel > oldLevel) {
+        setLevelUpOccurred(true);
+        VisualEffects.createLevelUpNotification(newProgress.playerLevel);
+      }
+
+      // Check for new badges
+      const newBadgeIds = newProgress.badges
+        .filter(badge => !oldProgress.badges.some(oldBadge => oldBadge.id === badge.id))
+        .map(badge => badge.id);
+      
+      if (newBadgeIds.length > 0) {
+        setNewBadges(newBadgeIds);
+        newProgress.badges
+          .filter(badge => newBadgeIds.includes(badge.id))
+          .forEach(badge => {
+            setTimeout(() => {
+              VisualEffects.createBadgeUnlockNotification(badge);
+            }, 1000);
+          });
+      }
+
       setProgress(newProgress);
+
+      // Create visual effects
+      setTimeout(() => {
+        VisualEffects.createParticleBurst(
+          window.innerWidth / 2, 
+          window.innerHeight / 2, 
+          '#4ade80'
+        );
+        
+        if (newConsecutive >= 3) {
+          VisualEffects.createConfetti(20);
+        }
+      }, 500);
+
+    } else {
+      // Reset consecutive count on wrong answer
+      setConsecutiveCorrect(0);
+      
+      // Visual feedback for wrong answer
+      const questionElement = document.querySelector('.question-container');
+      if (questionElement) {
+        VisualEffects.createErrorFeedback(questionElement as HTMLElement);
+      }
     }
 
-    // Auto advance after 2 seconds
+    // Hide XP gain effect after animation
+    setTimeout(() => {
+      setShowXPGain(false);
+    }, 1000);
+
+    // Auto advance after 2.5 seconds (longer to show effects)
     setTimeout(() => {
       handleNextQuestion(updatedSession);
-    }, 2000);
+    }, 2500);
   };
 
   const handleDrawingComplete = (_drawing: string) => {
@@ -259,13 +349,37 @@ export default function LevelPage() {
             <span className="font-medium">戻る</span>
           </button>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            {/* Score */}
             <div className="flex items-center gap-2 bg-white/80 rounded-full px-4 py-2 shadow-md">
               <Star className="text-yellow-500" size={20} />
               <span className="font-bold text-yellow-600">{session.score}</span>
             </div>
             
-            <div className="bg-white/80 rounded-full px-4 py-2 shadow-md">
+            {/* Player Level */}
+            <div className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-pink-400 text-white rounded-full px-4 py-2 shadow-md">
+              <Award size={18} />
+              <span className="font-bold text-sm">Lv.{progress.playerLevel}</span>
+            </div>
+
+            {/* Consecutive Streak */}
+            {consecutiveCorrect > 0 && (
+              <div className="flex items-center gap-2 bg-gradient-to-r from-orange-400 to-red-400 text-white rounded-full px-3 py-2 shadow-md animate-glow">
+                <span className="text-sm">🔥</span>
+                <span className="font-bold text-sm">{consecutiveCorrect}</span>
+              </div>
+            )}
+
+            {/* XP Gain Effect */}
+            {showXPGain && (
+              <div className="absolute right-0 top-12 xp-gain-effect">
+                <div className="bg-gradient-to-r from-green-400 to-blue-400 text-white rounded-lg px-3 py-1 text-sm font-bold shadow-lg">
+                  +{xpGained} XP
+                </div>
+              </div>
+            )}
+            
+            <div className="bg-white/80 rounded-full px-4 py-2 shadow-md relative">
               <span className="font-bold text-gray-700">
                 {session.currentQuestionIndex + 1} / {session.questions.length}
               </span>
@@ -285,23 +399,54 @@ export default function LevelPage() {
 
         {/* Question Card */}
         {currentQuestion && (
-          <div className="bg-white rounded-3xl p-8 shadow-2xl animate-bounce-in">
-            {/* Visual Aid */}
-            {currentQuestion.type === 'math' && (
-              <div dangerouslySetInnerHTML={{ __html: generateMathProblemVisual(currentQuestion) }} />
-            )}
-            {currentQuestion.type === 'japanese' && (
-              <div dangerouslySetInnerHTML={{ __html: generateJapaneseVisual(currentQuestion) }} />
-            )}
-            {currentQuestion.type === 'english' && (
-              <div dangerouslySetInnerHTML={{ __html: generateEnglishVisual(currentQuestion) }} />
+          <div className={`bg-white rounded-3xl p-8 shadow-2xl animate-bounce-in question-container relative ${
+            consecutiveCorrect >= 3 ? 'animate-glow' : ''
+          }`}>
+            {/* Streak indicator */}
+            {consecutiveCorrect >= 3 && (
+              <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-full px-3 py-1 text-sm font-bold animate-wiggle">
+                🔥 {consecutiveCorrect}連続正解！
+              </div>
             )}
 
-            {/* Question */}
+            {/* Visual Aid with enhanced animations */}
+            <div className="mb-6 animate-float">
+              {currentQuestion.type === 'math' && (
+                <div dangerouslySetInnerHTML={{ __html: generateMathProblemVisual(currentQuestion) }} />
+              )}
+              {currentQuestion.type === 'japanese' && (
+                <div dangerouslySetInnerHTML={{ __html: generateJapaneseVisual(currentQuestion) }} />
+              )}
+              {currentQuestion.type === 'english' && (
+                <div dangerouslySetInnerHTML={{ __html: generateEnglishVisual(currentQuestion) }} />
+              )}
+            </div>
+
+            {/* Question with enhanced styling */}
             <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold text-gray-800 mb-6">
+              <h2 className="text-4xl font-bold text-gray-800 mb-4 animate-pop-in">
                 {currentQuestion.question}
               </h2>
+              
+              {/* Question type indicator */}
+              <div className="flex justify-center mb-6">
+                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-lg ${
+                  currentQuestion.type === 'math' ? 'bg-blue-100 text-blue-800 border-2 border-blue-200' :
+                  currentQuestion.type === 'japanese' ? 'bg-red-100 text-red-800 border-2 border-red-200' :
+                  'bg-green-100 text-green-800 border-2 border-green-200'
+                }`}>
+                  <span className="text-lg">
+                    {currentQuestion.type === 'math' ? '🧮' :
+                     currentQuestion.type === 'japanese' ? '🇯🇵' : '🇺🇸'}
+                  </span>
+                  <span className="font-bold">
+                    {currentQuestion.type === 'math' ? '算数' :
+                     currentQuestion.type === 'japanese' ? '国語' : '英語'}
+                  </span>
+                  <Zap size={16} className="text-yellow-500" />
+                  <span className="font-bold text-yellow-600">{currentQuestion.points}pt</span>
+                </div>
+              </div>
 
               {/* Answer Input - Different types based on question */}
               {!showDrawingCanvas && (
@@ -312,9 +457,13 @@ export default function LevelPage() {
                       {currentQuestion.options.map((option, index) => (
                         <button
                           key={index}
-                          onClick={() => handleAnswerSubmit(option)}
+                          onClick={(e) => {
+                            VisualEffects.createButtonClickEffect(e);
+                            handleAnswerSubmit(option);
+                          }}
                           disabled={showResult}
-                          className="kid-button text-xl py-3 px-6 text-white bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500"
+                          className="interactive-button kid-button text-xl py-3 px-6 text-white bg-gradient-to-r from-blue-400 to-purple-400 hover:from-blue-500 hover:to-purple-500 animate-pop-in"
+                          style={{ animationDelay: `${index * 0.1}s` }}
                         >
                           {option}
                         </button>
@@ -384,11 +533,14 @@ export default function LevelPage() {
             {!currentQuestion.options && !showDrawingCanvas && (
               <div className="text-center">
                 <button
-                  onClick={() => handleAnswerSubmit()}
-                  className="kid-button text-2xl py-4 px-12"
+                  onClick={(e) => {
+                    VisualEffects.createButtonClickEffect(e);
+                    handleAnswerSubmit();
+                  }}
+                  className="interactive-button kid-button text-2xl py-4 px-12 animate-pop-in"
                   disabled={showResult}
                 >
-                  答える！
+                  答える！ 🚀
                 </button>
               </div>
             )}

@@ -39,6 +39,40 @@ export interface UserProgress {
   currentLevel: Record<string, string>;
   achievements: string[];
   streaks: Record<string, number>;
+  badges: Badge[];
+  experiencePoints: number;
+  playerLevel: number;
+  dailyGoals: DailyGoal[];
+  weeklyStats: WeeklyStats;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  type: 'bronze' | 'silver' | 'gold' | 'special';
+  unlockedAt: Date;
+  category: 'math' | 'japanese' | 'english' | 'general';
+}
+
+export interface DailyGoal {
+  id: string;
+  type: 'questions' | 'points' | 'streak' | 'time';
+  target: number;
+  current: number;
+  completed: boolean;
+  reward: number;
+  emoji: string;
+  description: string;
+}
+
+export interface WeeklyStats {
+  questionsAnswered: number;
+  correctRate: number;
+  timeSpent: number;
+  subjectsStudied: string[];
+  bestStreak: number;
 }
 
 export interface GameSession {
