@@ -8,6 +8,7 @@ import { EnglishQuestionGenerator, generateEnglishVisual } from '@/lib/english-g
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
+import { CertificateManager } from '@/lib/certificate';
 import { Question, GameSession, UserProgress } from '@/types';
 import { ArrowLeft, CheckCircle, XCircle, Star, Award, Zap } from 'lucide-react';
 import DrawingCanvas from '@/components/DrawingCanvas';
@@ -103,6 +104,12 @@ export default function LevelPage() {
     setSession(updatedSession);
 
     if (correct) {
+      // Play correct sound and encouragement
+      soundManager?.playSound('correct');
+      setTimeout(() => {
+        soundManager?.speakEncouragement(true);
+      }, 500);
+      
       // Update consecutive correct count
       const newConsecutive = consecutiveCorrect + 1;
       setConsecutiveCorrect(newConsecutive);
@@ -177,6 +184,12 @@ export default function LevelPage() {
       }, 500);
 
     } else {
+      // Play incorrect sound and encouragement
+      soundManager?.playSound('incorrect');
+      setTimeout(() => {
+        soundManager?.speakEncouragement(false);
+      }, 500);
+      
       // Reset consecutive count on wrong answer
       setConsecutiveCorrect(0);
       
@@ -244,8 +257,33 @@ export default function LevelPage() {
     const newProgress = StorageManager.completeLevel(levelId);
     setProgress(newProgress);
     
-    // Play celebration sound
+    // Play celebration sound and speak completion
     soundManager?.playSound('celebration');
+    setTimeout(() => {
+      soundManager?.speakLevelComplete(completedSession.score);
+    }, 1000);
+    
+    // Generate certificate if perfect score or high achievement
+    const correctRate = (completedSession.correctAnswers / completedSession.questions.length) * 100;
+    if (correctRate === 100) {
+      const certificate = CertificateManager.generateCertificate(
+        'perfect_score',
+        newProgress,
+        { score: completedSession.score, level: level }
+      );
+      setTimeout(() => {
+        CertificateManager.showCertificateModal(certificate);
+      }, 3000);
+    } else if (level && level.difficulty >= 3) {
+      const certificate = CertificateManager.generateCertificate(
+        'level_completion',
+        newProgress,
+        { score: completedSession.score, level: level }
+      );
+      setTimeout(() => {
+        CertificateManager.showCertificateModal(certificate);
+      }, 3000);
+    }
     
     // Show results screen
     setShowResult(false);
@@ -424,9 +462,18 @@ export default function LevelPage() {
 
             {/* Question with enhanced styling */}
             <div className="text-center mb-8">
-              <h2 className="text-4xl font-bold text-gray-800 mb-4 animate-pop-in">
-                {currentQuestion.question}
-              </h2>
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <h2 className="text-4xl font-bold text-gray-800 animate-pop-in">
+                  {currentQuestion.question}
+                </h2>
+                <button
+                  onClick={() => soundManager?.speakQuestion(currentQuestion.question, currentQuestion.type)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 animate-bounce-in"
+                  title="問題を読み上げ"
+                >
+                  🔊
+                </button>
+              </div>
               
               {/* Question type indicator */}
               <div className="flex justify-center mb-6">

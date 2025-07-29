@@ -124,4 +124,78 @@ export class SoundManager {
       window.speechSynthesis.speak(utterance);
     }
   }
+
+  // Enhanced question reading with proper pronunciation
+  async speakQuestion(question: string, type: 'math' | 'japanese' | 'english'): Promise<void> {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+
+    let lang = 'ja-JP';
+    let processedText = question;
+
+    // Remove emojis and special characters for better speech
+    processedText = processedText.replace(/[🌟⭐🏆💫]/g, '');
+    
+    switch (type) {
+      case 'english':
+        lang = 'en-US';
+        break;
+      case 'japanese':
+        // Replace reading hints with proper pronunciation
+        processedText = processedText.replace(/「(.+?)」/g, '$1');
+        break;
+      case 'math':
+        // Convert math symbols to Japanese words
+        processedText = processedText
+          .replace(/\+/g, 'たす')
+          .replace(/-/g, 'ひく')
+          .replace(/×/g, 'かける')
+          .replace(/÷/g, 'わる')
+          .replace(/=/g, 'は')
+          .replace(/〇/g, 'なに');
+        break;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(processedText);
+    utterance.lang = lang;
+    utterance.rate = 0.7;
+    utterance.pitch = 1.1;
+    utterance.volume = 0.8;
+    
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Encouragement phrases
+  speakEncouragement(isCorrect: boolean): void {
+    const correctPhrases = [
+      'よくできました！',
+      'すばらしい！',
+      'せいかい！',
+      'がんばったね！',
+      'やったね！'
+    ];
+    
+    const tryAgainPhrases = [
+      'もういちど やってみよう',
+      'だいじょうぶ がんばって',
+      'つぎは きっと できるよ',
+      'おしい！ もうすこしだよ'
+    ];
+    
+    const phrases = isCorrect ? correctPhrases : tryAgainPhrases;
+    const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+    
+    this.speak(randomPhrase);
+  }
+
+  // Level completion celebration
+  speakLevelComplete(score: number): void {
+    const celebrationPhrases = [
+      `${score}てん！ レベル かんりょう！ すごいね！`,
+      `やったね！ ${score}ポイント かくとく！`,
+      `かんぺき！ つぎの レベルも がんばろう！`
+    ];
+    
+    const randomPhrase = celebrationPhrases[Math.floor(Math.random() * celebrationPhrases.length)];
+    this.speak(randomPhrase);
+  }
 }

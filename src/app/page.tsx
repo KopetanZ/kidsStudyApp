@@ -5,6 +5,7 @@ import { subjects } from '@/lib/subjects';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { GamificationManager } from '@/lib/gamification';
+import { ProgressReportManager } from '@/lib/progress-report';
 import { UserProgress } from '@/types';
 import Link from 'next/link';
 
@@ -27,6 +28,92 @@ export default function Home() {
 
   const handleSubjectClick = () => {
     soundManager?.playSound('click');
+  };
+
+  const handleProgressReport = async () => {
+    soundManager?.playSound('click');
+    const report = ProgressReportManager.generateReport();
+    
+    // Show report in a modal first
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      padding: 20px;
+      box-sizing: border-box;
+    `;
+
+    modal.innerHTML = `
+      <div style="
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 90vw;
+        max-height: 90vh;
+        overflow: auto;
+        position: relative;
+      ">
+        <button onclick="this.closest('.modal').remove()" style="
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: #ef4444;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+          cursor: pointer;
+          z-index: 1;
+        ">×</button>
+        ${ProgressReportManager.generateReportHTML(report)}
+        <div style="text-align: center; margin-top: 20px;">
+          <button onclick="window.reportManager.downloadReport(window.currentReport)" style="
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+          ">📥 レポートをダウンロード</button>
+          <button onclick="this.closest('.modal').remove()" style="
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+          ">閉じる</button>
+        </div>
+      </div>
+    `;
+
+    modal.className = 'modal';
+    
+    // Store report for download
+    (window as any).currentReport = report;
+    (window as any).reportManager = ProgressReportManager;
+
+    document.body.appendChild(modal);
+
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
   };
 
   if (!progress) {
@@ -235,6 +322,20 @@ export default function Home() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Progress Report Section */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={handleProgressReport}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">📊</span>
+            <div className="text-left">
+              <div className="text-lg">学習レポートを見る</div>
+              <div className="text-sm opacity-90">保護者向け進捗報告書</div>
+            </div>
+          </button>
         </div>
 
         {/* Fun Footer */}
