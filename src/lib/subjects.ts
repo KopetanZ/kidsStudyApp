@@ -40,21 +40,66 @@ export const subjects: Subject[] = [
 
 export const mathLevels: Level[] = [
   {
-    id: 'math-addition-1',
+    id: 'math-numbers-1',
     subjectId: 'math',
-    name: '足し算 レベル1',
-    description: '●で視覚サポート付きの足し算',
+    name: '数の理解 1-10',
+    description: '1から10までの数を覚えよう',
     difficulty: 1,
     requiredPoints: 0,
     isUnlocked: true
   },
   {
+    id: 'math-numbers-2',
+    subjectId: 'math',
+    name: '数の理解 1-20',
+    description: '1から20までの数を覚えよう',
+    difficulty: 1,
+    requiredPoints: 50,
+    isUnlocked: false
+  },
+  {
+    id: 'math-numbers-3',
+    subjectId: 'math',
+    name: '数の理解 1-100',
+    description: '1から100までの数を覚えよう',
+    difficulty: 2,
+    requiredPoints: 100,
+    isUnlocked: false
+  },
+  {
+    id: 'math-addition-1',
+    subjectId: 'math',
+    name: '足し算 レベル1',
+    description: '●で視覚サポート付きの足し算（一桁）',
+    difficulty: 2,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'math-carry-addition',
+    subjectId: 'math',
+    name: '繰り上がりの足し算',
+    description: '10を超える足し算をマスターしよう',
+    difficulty: 3,
+    requiredPoints: 250,
+    isUnlocked: false
+  },
+  {
+    id: 'math-borrow-subtraction',
+    subjectId: 'math',
+    name: '繰り下がりの引き算',
+    description: '10から借りる引き算をマスターしよう',
+    difficulty: 3,
+    requiredPoints: 300,
+    isUnlocked: false
+  },
+  {
     id: 'math-addition-2',
     subjectId: 'math',
     name: '足し算 レベル2',
-    description: '視覚サポートなしの足し算',
-    difficulty: 2,
-    requiredPoints: 120,
+    description: '視覚サポートなしの足し算（一桁）',
+    difficulty: 4,
+    requiredPoints: 350,
     isUnlocked: false
   },
   {
@@ -226,9 +271,36 @@ export const japaneseLevels: Level[] = [
     id: 'japanese-katakana-1',
     subjectId: 'japanese',
     name: 'カタカナ ア〜サ行',
-    description: 'ア、カ、サ行のカタカナを書こう',
+    description: '直線文字で漢字の基礎を作ろう',
     difficulty: 2,
     requiredPoints: 200,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-katakana-2',
+    subjectId: 'japanese',
+    name: 'カタカナ タ〜ハ行',
+    description: '外来語によく使われる文字を覚えよう',
+    difficulty: 3,
+    requiredPoints: 250,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-katakana-3',
+    subjectId: 'japanese',
+    name: 'カタカナ マ〜ワ行',
+    description: 'すべてのカタカナを完成させよう',
+    difficulty: 3,
+    requiredPoints: 300,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-katakana-words',
+    subjectId: 'japanese',
+    name: 'カタカナ単語',
+    description: '外来語を読んで書こう',
+    difficulty: 4,
+    requiredPoints: 400,
     isUnlocked: false
   },
   {

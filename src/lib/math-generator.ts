@@ -1,6 +1,89 @@
 import { Question } from '@/types';
+import { NumbersQuestionGenerator } from './numbers-generator';
 
 export class MathQuestionGenerator {
+  // 繰り上がりの足し算（1年生2学期の最重要単元）
+  static generateCarryAddition(): Question[] {
+    const questions: Question[] = [];
+    
+    // さくらんぼ計算を使った繰り上がり問題
+    const carryProblems = [
+      { a: 9, b: 2 }, { a: 9, b: 3 }, { a: 9, b: 4 }, { a: 9, b: 5 },
+      { a: 8, b: 3 }, { a: 8, b: 4 }, { a: 8, b: 5 }, { a: 8, b: 6 },
+      { a: 7, b: 4 }, { a: 7, b: 5 }, { a: 7, b: 6 }, { a: 7, b: 7 },
+      { a: 6, b: 5 }, { a: 6, b: 6 }, { a: 6, b: 7 }, { a: 6, b: 8 }
+    ];
+
+    carryProblems.forEach((prob, index) => {
+      const result = prob.a + prob.b;
+      const complement = 10 - prob.a; // 10にするために必要な数
+      const remaining = prob.b - complement; // 残りの数
+      
+      questions.push({
+        id: `carry-add-${index}`,
+        type: 'math',
+        subtype: 'carry-addition',
+        question: `${prob.a} + ${prob.b} = 〇`,
+        correctAnswer: result.toString(),
+        visualAid: {
+          type: 'carry-addition-sakura',
+          content: { 
+            a: prob.a, 
+            b: prob.b, 
+            complement: complement,
+            remaining: remaining,
+            result 
+          },
+          position: 'top'
+        },
+        points: 20
+      });
+    });
+
+    return this.shuffleArray(questions).slice(0, 12);
+  }
+
+  // 繰り下がりの引き算（1年生2学期の最重要単元）
+  static generateBorrowSubtraction(): Question[] {
+    const questions: Question[] = [];
+    
+    // 繰り下がりの引き算問題
+    const borrowProblems = [
+      { a: 11, b: 2 }, { a: 11, b: 3 }, { a: 11, b: 4 }, { a: 11, b: 5 },
+      { a: 12, b: 3 }, { a: 12, b: 4 }, { a: 12, b: 5 }, { a: 12, b: 6 },
+      { a: 13, b: 4 }, { a: 13, b: 5 }, { a: 13, b: 6 }, { a: 13, b: 7 },
+      { a: 14, b: 5 }, { a: 14, b: 6 }, { a: 14, b: 7 }, { a: 14, b: 8 }
+    ];
+
+    borrowProblems.forEach((prob, index) => {
+      const result = prob.a - prob.b;
+      const onesA = prob.a % 10;
+      const tensA = Math.floor(prob.a / 10);
+      
+      questions.push({
+        id: `borrow-sub-${index}`,
+        type: 'math',
+        subtype: 'borrow-subtraction',
+        question: `${prob.a} - ${prob.b} = 〇`,
+        correctAnswer: result.toString(),
+        visualAid: {
+          type: 'borrow-subtraction-blocks',
+          content: { 
+            a: prob.a,
+            b: prob.b,
+            onesA: onesA,
+            tensA: tensA,
+            result 
+          },
+          position: 'top'
+        },
+        points: 25
+      });
+    });
+
+    return this.shuffleArray(questions).slice(0, 12);
+  }
+
   static generateAdditionLevel1(): Question[] {
     const questions: Question[] = [];
     
@@ -433,6 +516,14 @@ export class MathQuestionGenerator {
 
   static generateQuestionsByLevelId(levelId: string): Question[] {
     switch (levelId) {
+      case 'math-numbers-1':
+      case 'math-numbers-2':
+      case 'math-numbers-3':
+        return NumbersQuestionGenerator.generateQuestionsByLevelId(levelId);
+      case 'math-carry-addition':
+        return this.generateCarryAddition();
+      case 'math-borrow-subtraction':
+        return this.generateBorrowSubtraction();
       case 'math-addition-1':
         return this.generateAdditionLevel1();
       case 'math-addition-2':
@@ -476,9 +567,117 @@ export class MathQuestionGenerator {
   }
 }
 
+import { generateNumbersVisual } from './numbers-generator';
+
 export const generateMathProblemVisual = (question: Question): string => {
   if (!question.visualAid) {
     return '';
+  }
+
+  // 数理解問題の視覚化
+  const numbersVisualTypes = ['counting-dots', 'number-display', 'number-sequence', 'place-value-teens', 'number-comparison', 'tens-visualization', 'place-value-blocks'];
+  if (numbersVisualTypes.includes(question.visualAid.type)) {
+    return generateNumbersVisual(question);
+  }
+
+  // さくらんぼ計算による繰り上がりの視覚化
+  if (question.visualAid.type === 'carry-addition-sakura') {
+    const { a, b, complement, remaining, result } = question.visualAid.content as { 
+      a: number; b: number; complement: number; remaining: number; result: number 
+    };
+    
+    return `
+      <div class="bg-pink-50 rounded-2xl p-6 mb-4">
+        <div class="text-center text-lg font-bold text-gray-700 mb-4">🌸 さくらんぼ計算でやってみよう！</div>
+        <div class="space-y-4">
+          <div class="text-center text-2xl font-bold text-gray-800">
+            ${a} + ${b} = ?
+          </div>
+          
+          <div class="flex justify-center items-center gap-4">
+            <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-pink-200">
+              <div class="text-lg font-bold text-center mb-2">${a}</div>
+              <div class="flex gap-1 justify-center">
+                ${Array(a).fill(0).map(() => '<div class="w-4 h-4 bg-blue-500 rounded-full"></div>').join('')}
+              </div>
+            </div>
+            
+            <div class="text-2xl font-bold text-gray-600">+</div>
+            
+            <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-pink-200">
+              <div class="text-lg font-bold text-center mb-2">${b}</div>
+              <div class="space-y-2">
+                <div class="text-sm text-pink-600 text-center">${complement} + ${remaining}</div>
+                <div class="flex gap-1 justify-center">
+                  ${Array(complement).fill(0).map(() => '<div class="w-4 h-4 bg-pink-500 rounded-full"></div>').join('')}
+                  <div class="w-1"></div>
+                  ${Array(remaining).fill(0).map(() => '<div class="w-4 h-4 bg-green-500 rounded-full"></div>').join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center">
+            <div class="inline-block bg-yellow-100 rounded-xl p-4 border-2 border-yellow-300">
+              <div class="text-sm text-gray-600 mb-2">${a} + ${complement} = 10</div>
+              <div class="text-sm text-gray-600 mb-2">10 + ${remaining} = ${result}</div>
+              <div class="text-xl font-bold text-yellow-800">答え: ${result}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 繰り下がりの引き算の視覚化
+  if (question.visualAid.type === 'borrow-subtraction-blocks') {
+    const { a, b, onesA, tensA, result } = question.visualAid.content as { 
+      a: number; b: number; onesA: number; tensA: number; result: number 
+    };
+    
+    return `
+      <div class="bg-orange-50 rounded-2xl p-6 mb-4">
+        <div class="text-center text-lg font-bold text-gray-700 mb-4">🧮 10のかたまりから借りよう！</div>
+        <div class="space-y-4">
+          <div class="text-center text-2xl font-bold text-gray-800">
+            ${a} - ${b} = ?
+          </div>
+          
+          <div class="flex justify-center gap-6">
+            <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-orange-200">
+              <div class="text-lg font-bold text-center mb-2">${a}</div>
+              <div class="space-y-2">
+                <div class="text-sm text-center text-gray-600">10のかたまり: ${tensA}個</div>
+                <div class="flex gap-1 justify-center">
+                  ${Array(tensA).fill(0).map(() => '<div class="w-8 h-6 bg-blue-500 rounded border-2 border-blue-700 flex items-center justify-center text-white text-xs font-bold">10</div>').join('')}
+                </div>
+                <div class="text-sm text-center text-gray-600">ばらの数: ${onesA}個</div>
+                <div class="flex gap-1 justify-center">
+                  ${Array(onesA).fill(0).map(() => '<div class="w-4 h-4 bg-green-500 rounded-full"></div>').join('')}
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-2xl font-bold text-gray-600">-</div>
+            
+            <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-red-200">
+              <div class="text-lg font-bold text-center mb-2">${b}</div>
+              <div class="flex gap-1 justify-center">
+                ${Array(b).fill(0).map(() => '<div class="w-4 h-4 bg-red-500 rounded-full"></div>').join('')}
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center">
+            <div class="inline-block bg-yellow-100 rounded-xl p-4 border-2 border-yellow-300">
+              <div class="text-sm text-gray-600 mb-2">10のかたまりから10個借りて...</div>
+              <div class="text-sm text-gray-600 mb-2">${onesA + 10} - ${b} = ${result}</div>
+              <div class="text-xl font-bold text-orange-800">答え: ${result}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   // Handle addition with dots visual (2+3=5 → ●●+●●●=●●●●●)
