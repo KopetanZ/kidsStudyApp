@@ -21,6 +21,20 @@ export const subjects: Subject[] = [
     emoji: '🇺🇸',
     color: 'from-green-400 to-green-600',
     description: 'アルファベットと英単語を学ぼう！'
+  },
+  {
+    id: 'time',
+    name: '時計',
+    emoji: '🕐',
+    color: 'from-purple-400 to-purple-600',
+    description: '時計の読み方を覚えよう！'
+  },
+  {
+    id: 'shape',
+    name: '図形',
+    emoji: '🔺',
+    color: 'from-orange-400 to-orange-600',
+    description: 'いろいろな図形を学ぼう！'
   }
 ];
 
@@ -29,7 +43,7 @@ export const mathLevels: Level[] = [
     id: 'math-addition-1',
     subjectId: 'math',
     name: '足し算 レベル1',
-    description: '1から5までの足し算（●で視覚サポート）',
+    description: '●で視覚サポート付きの足し算',
     difficulty: 1,
     requiredPoints: 0,
     isUnlocked: true
@@ -38,9 +52,9 @@ export const mathLevels: Level[] = [
     id: 'math-addition-2',
     subjectId: 'math',
     name: '足し算 レベル2',
-    description: '1から10までの足し算',
+    description: '視覚サポートなしの足し算',
     difficulty: 2,
-    requiredPoints: 100,
+    requiredPoints: 120,
     isUnlocked: false
   },
   {
@@ -56,18 +70,27 @@ export const mathLevels: Level[] = [
     id: 'math-subtraction-1',
     subjectId: 'math',
     name: '引き算 レベル1',
-    description: '1から10までの引き算',
+    description: '●で視覚サポート付きの引き算',
     difficulty: 2,
-    requiredPoints: 200,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'math-subtraction-2',
+    subjectId: 'math',
+    name: '引き算 レベル2',
+    description: '視覚サポートなしの引き算',
+    difficulty: 3,
+    requiredPoints: 300,
     isUnlocked: false
   },
   {
     id: 'math-multiplication-1',
     subjectId: 'math',
     name: 'かけ算 レベル1',
-    description: '九九表を覚えよう',
+    description: '九九の読み方と計算',
     difficulty: 4,
-    requiredPoints: 500,
+    requiredPoints: 450,
     isUnlocked: false
   },
   {
@@ -168,8 +191,68 @@ export const englishLevels: Level[] = [
   }
 ];
 
+export const timeLevels: Level[] = [
+  {
+    id: 'time-reading-1',
+    subjectId: 'time',
+    name: '時計の読み方 レベル1',
+    description: '○時を読んでみよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'time-reading-2',
+    subjectId: 'time',
+    name: '時計の読み方 レベル2',
+    description: '○時30分を読んでみよう',
+    difficulty: 2,
+    requiredPoints: 120,
+    isUnlocked: false
+  },
+  {
+    id: 'time-reading-3',
+    subjectId: 'time',
+    name: '時計の読み方 レベル3',
+    description: '15分と45分を読んでみよう',
+    difficulty: 3,
+    requiredPoints: 300,
+    isUnlocked: false
+  }
+];
+
+export const shapeLevels: Level[] = [
+  {
+    id: 'shape-basic',
+    subjectId: 'shape',
+    name: '基本図形',
+    description: '円・三角形・四角形を覚えよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'shape-comparison',
+    subjectId: 'shape',
+    name: '図形の比較',
+    description: '仲間はずれを見つけよう',
+    difficulty: 2,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'shape-pattern',
+    subjectId: 'shape',
+    name: '図形のパターン',
+    description: 'パターンを見つけて答えよう',
+    difficulty: 3,
+    requiredPoints: 350,
+    isUnlocked: false
+  }
+];
+
 export const getAllLevels = (): Level[] => {
-  return [...mathLevels, ...japaneseLevels, ...englishLevels];
+  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels];
 };
 
 export const getLevelsBySubject = (subjectId: string): Level[] => {
@@ -180,6 +263,10 @@ export const getLevelsBySubject = (subjectId: string): Level[] => {
       return japaneseLevels;
     case 'english':
       return englishLevels;
+    case 'time':
+      return timeLevels;
+    case 'shape':
+      return shapeLevels;
     default:
       return [];
   }

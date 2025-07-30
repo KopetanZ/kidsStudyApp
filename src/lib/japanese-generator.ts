@@ -89,17 +89,22 @@ export class JapaneseQuestionGenerator {
     const questions: Question[] = [];
     const characters = hiraganaData.slice(0, 15); // あ〜さ行
     
-    // Generate character writing questions
+    // Generate character writing questions with visual support
     characters.forEach((char, index) => {
       questions.push({
         id: `jp-hira-1-${index}`,
         type: 'japanese',
         subtype: 'hiragana-writing',
-        question: `「${char.reading}」の音を表すひらがなを書いてください`,
+        question: `この文字を書いてください`,
         correctAnswer: char.character,
         visualAid: {
-          type: 'image',
-          content: char.image || '',
+          type: 'hiragana-with-image',
+          content: {
+            image: char.image,
+            character: char.character,
+            reading: char.reading,
+            example: this.getExampleWord(char.character)
+          },
           position: 'top'
         },
         points: 15
@@ -107,6 +112,69 @@ export class JapaneseQuestionGenerator {
     });
 
     return this.shuffleArray(questions).slice(0, 10);
+  }
+
+  // Helper function to get example words
+  private static getExampleWord(character: string): string {
+    const examples: { [key: string]: string } = {
+      // あ行
+      'あ': 'あり（蟻）',
+      'い': 'いぬ（犬）',
+      'う': 'うし（牛）',
+      'え': 'えび（海老）',
+      'お': 'おに（鬼）',
+      // か行
+      'か': 'かぎ（鍵）',
+      'き': 'き（木）',
+      'く': 'くも（雲）',
+      'け': 'けーき（ケーキ）',
+      'こ': 'こども（子供）',
+      // さ行
+      'さ': 'さかな（魚）',
+      'し': 'しし（獅子）',
+      'す': 'すいか（西瓜）',
+      'せ': 'せかい（世界）',
+      'そ': 'そら（空）',
+      // た行
+      'た': 'たまご（卵）',
+      'ち': 'ちーず（チーズ）',
+      'つ': 'つき（月）',
+      'て': 'て（手）',
+      'と': 'とら（虎）',
+      // な行
+      'な': 'なす（茄子）',
+      'に': 'にじ（虹）',
+      'ぬ': 'ぬの（布）',
+      'ね': 'ねこ（猫）',
+      'の': 'のやま（野山）',
+      // は行
+      'は': 'はな（花）',
+      'ひ': 'ひ（日）',
+      'ふ': 'ふね（船）',
+      'へ': 'へび（蛇）',
+      'ほ': 'ほし（星）',
+      // ま行
+      'ま': 'まく（幕）',
+      'み': 'め（目）',
+      'む': 'むし（虫）',
+      'め': 'め（目）',
+      'も': 'もも（桃）',
+      // や行
+      'や': 'やね（屋根）',
+      'ゆ': 'ゆ（湯）',
+      'よ': 'よる（夜）',
+      // ら行
+      'ら': 'らじお（ラジオ）',
+      'り': 'りんご（林檎）',
+      'る': 'るーむ（ルーム）',
+      'れ': 'れい（礼）',
+      'ろ': 'ろぼっと（ロボット）',
+      // わ行
+      'わ': 'わ（輪）',
+      'を': 'を（助詞）',
+      'ん': 'ん（音）'
+    };
+    return examples[character] || character;
   }
 
   static generateHiraganaLevel2(): Question[] {
@@ -118,11 +186,16 @@ export class JapaneseQuestionGenerator {
         id: `jp-hira-2-${index}`,
         type: 'japanese',
         subtype: 'hiragana-writing',
-        question: `「${char.reading}」の音を表すひらがなを書いてください`,
+        question: `この文字を書いてください`,
         correctAnswer: char.character,
         visualAid: {
-          type: 'image',
-          content: char.image || '',
+          type: 'hiragana-with-image',
+          content: {
+            image: char.image,
+            character: char.character,
+            reading: char.reading,
+            example: this.getExampleWord(char.character)
+          },
           position: 'top'
         },
         points: 15
@@ -141,11 +214,16 @@ export class JapaneseQuestionGenerator {
         id: `jp-hira-3-${index}`,
         type: 'japanese',
         subtype: 'hiragana-writing',
-        question: `「${char.reading}」の音を表すひらがなを書いてください`,
+        question: `この文字を書いてください`,
         correctAnswer: char.character,
         visualAid: {
-          type: 'image',
-          content: char.image || '',
+          type: 'hiragana-with-image',
+          content: {
+            image: char.image,
+            character: char.character,
+            reading: char.reading,
+            example: this.getExampleWord(char.character)
+          },
           position: 'top'
         },
         points: 15
@@ -249,17 +327,55 @@ export const recognizeCharacter = async (_imageData: string): Promise<string> =>
 };
 
 export const generateJapaneseVisual = (question: Question): string => {
-  if (!question.visualAid || question.visualAid.type !== 'image') {
+  if (!question.visualAid) {
     return '';
   }
 
-  return `
-    <div class="flex justify-center mb-6">
-      <div class="bg-white rounded-2xl p-8 shadow-lg border-4 border-blue-200">
-        <div class="text-8xl text-center animate-bounce-in">
-          ${question.visualAid.content}
+  // Handle the new hiragana-with-image visual aid type
+  if (question.visualAid.type === 'hiragana-with-image') {
+    const { image, character, example } = question.visualAid.content as {
+      image: string;
+      character: string;
+      reading: string;
+      example: string;
+    };
+
+    return `
+      <div class="bg-yellow-50 rounded-2xl p-6 mb-4">
+        <div class="text-center text-lg font-bold text-gray-700 mb-4">この文字を覚えよう！</div>
+        <div class="flex items-center justify-center gap-6 mb-4">
+          <div class="bg-white rounded-xl p-4 shadow-lg border-4 border-pink-200">
+            <div class="text-6xl text-center animate-bounce-in">
+              ${image}
+            </div>
+          </div>
+          <div class="text-4xl font-bold text-gray-600">+</div>
+          <div class="bg-white rounded-xl p-4 shadow-lg border-4 border-blue-200">
+            <div class="text-6xl text-center animate-bounce-in font-bold text-blue-800" style="animation-delay: 0.2s">
+              ${character}
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg text-gray-600 mb-2">${example}</div>
+          <div class="text-sm text-gray-500">絵と文字をおぼえて書いてみよう！</div>
         </div>
       </div>
-    </div>
-  `;
+    `;
+  }
+
+  // Handle old image type for backward compatibility
+  if (question.visualAid.type === 'image') {
+    return `
+      <div class="flex justify-center mb-6">
+        <div class="bg-white rounded-2xl p-8 shadow-lg border-4 border-blue-200">
+          <div class="text-8xl text-center animate-bounce-in">
+            ${question.visualAid.content}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  return '';
 };

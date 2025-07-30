@@ -66,7 +66,7 @@ export class CertificateManager {
           studentName,
           earnedDate,
           streak: data?.streak,
-          template: data!.streak >= 7 ? 'gold' : data!.streak >= 3 ? 'silver' : 'bronze'
+          template: (data?.streak || 0) >= 7 ? 'gold' : (data?.streak || 0) >= 3 ? 'silver' : 'bronze'
         };
         
       case 'badge_collection':

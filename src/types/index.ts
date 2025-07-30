@@ -28,8 +28,8 @@ export interface Question {
 }
 
 export interface VisualAid {
-  type: 'dots' | 'image' | 'text';
-  content: string | number;
+  type: 'dots' | 'image' | 'text' | 'addition-dots' | 'subtraction-dots' | 'kuku-reading' | 'hiragana-with-image';
+  content: string | number | object;
   position?: 'left' | 'right' | 'top' | 'bottom';
 }
 
@@ -53,7 +53,7 @@ export interface Badge {
   emoji: string;
   type: 'bronze' | 'silver' | 'gold' | 'special';
   unlockedAt: Date;
-  category: 'math' | 'japanese' | 'english' | 'general';
+  category: 'math' | 'japanese' | 'english' | 'time' | 'shape' | 'general';
 }
 
 export interface DailyGoal {

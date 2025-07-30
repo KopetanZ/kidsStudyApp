@@ -6,12 +6,18 @@ import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { GamificationManager } from '@/lib/gamification';
 import { ProgressReportManager } from '@/lib/progress-report';
+import { AdvancedGamificationManager } from '@/lib/advanced-gamification';
+import { AccessibilityManager } from '@/lib/accessibility';
 import { UserProgress } from '@/types';
 import Link from 'next/link';
+import AchievementCenter from '@/components/AchievementCenter';
+import AccessibilitySettingsComponent from '@/components/AccessibilitySettings';
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [soundManager, setSoundManager] = useState<SoundManager | null>(null);
+  const [showAchievementCenter, setShowAchievementCenter] = useState(false);
+  const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -21,6 +27,9 @@ export default function Home() {
       const sound = SoundManager.getInstance();
       await sound.init();
       setSoundManager(sound);
+
+      // Initialize accessibility
+      AccessibilityManager.initialize();
     };
 
     initializeApp();
@@ -29,6 +38,19 @@ export default function Home() {
   const handleSubjectClick = () => {
     soundManager?.playSound('click');
   };
+
+  const handleAchievementCenterOpen = () => {
+    soundManager?.playSound('click');
+    setShowAchievementCenter(true);
+  };
+
+  const handleAccessibilityOpen = () => {
+    soundManager?.playSound('click');
+    setShowAccessibilitySettings(true);
+  };
+
+  const currentSeasonalEvent = AdvancedGamificationManager.getCurrentSeasonalEvent();
+  const seasonalBonus = AdvancedGamificationManager.getSeasonalBonus();
 
   const handleProgressReport = async () => {
     soundManager?.playSound('click');
@@ -127,8 +149,34 @@ export default function Home() {
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-4xl mx-auto">
+        <main id="main-content">
+        {/* Seasonal Event Banner */}
+        {currentSeasonalEvent && (
+          <div className={`bg-gradient-to-r ${currentSeasonalEvent.color} text-white rounded-2xl p-4 mb-6 shadow-lg animate-bounce-in`}>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-3xl">{currentSeasonalEvent.emoji}</span>
+              <div className="text-center">
+                <div className="font-bold text-lg">{currentSeasonalEvent.name} 開催中！</div>
+                <div className="text-sm opacity-90">
+                  ×{seasonalBonus} ポイントボーナス中！ {currentSeasonalEvent.description}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
-        <header className="text-center mb-8">
+        <header className="text-center mb-8 relative">
+          {/* Accessibility Button */}
+          <button
+            onClick={handleAccessibilityOpen}
+            className="absolute top-0 right-0 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-colors"
+            aria-label="アクセシビリティ設定を開く"
+            title="アクセシビリティ設定"
+          >
+            ⚙️
+          </button>
+
           <h1 className="text-4xl font-bold text-gray-800 mb-2 animate-bounce-in">
             🌟 がくしゅうアプリ 🌟
           </h1>
@@ -324,15 +372,26 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Progress Report Section */}
-        <div className="mt-8 text-center">
+        {/* Action Buttons Section */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <button
+            onClick={handleAchievementCenterOpen}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">🏆</span>
+            <div className="text-left">
+              <div className="text-lg">アチーブメント</div>
+              <div className="text-sm opacity-90">称号・ランキング・チャレンジ</div>
+            </div>
+          </button>
+          
           <button
             onClick={handleProgressReport}
             className="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
           >
             <span className="text-2xl">📊</span>
             <div className="text-left">
-              <div className="text-lg">学習レポートを見る</div>
+              <div className="text-lg">学習レポート</div>
               <div className="text-sm opacity-90">保護者向け進捗報告書</div>
             </div>
           </button>
@@ -350,7 +409,18 @@ export default function Home() {
             </span>
           </div>
         </footer>
+        </main>
       </div>
+
+      {/* Achievement Center Modal */}
+      {showAchievementCenter && (
+        <AchievementCenter onClose={() => setShowAchievementCenter(false)} />
+      )}
+
+      {/* Accessibility Settings Modal */}
+      {showAccessibilitySettings && (
+        <AccessibilitySettingsComponent onClose={() => setShowAccessibilitySettings(false)} />
+      )}
     </div>
   );
 }

@@ -5,10 +5,13 @@ import { useParams, useRouter } from 'next/navigation';
 import { MathQuestionGenerator, generateMathProblemVisual } from '@/lib/math-generator';
 import { JapaneseQuestionGenerator, generateJapaneseVisual } from '@/lib/japanese-generator';
 import { EnglishQuestionGenerator, generateEnglishVisual } from '@/lib/english-generator';
+import { TimeQuestionGenerator, generateTimeVisual } from '@/lib/time-generator';
+import { ShapeQuestionGenerator, generateShapeVisual } from '@/lib/shape-generator';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
 import { CertificateManager } from '@/lib/certificate';
+import { getAllLevels } from '@/lib/subjects';
 import { Question, GameSession, UserProgress } from '@/types';
 import { ArrowLeft, CheckCircle, XCircle, Star, Award, Zap } from 'lucide-react';
 import DrawingCanvas from '@/components/DrawingCanvas';
@@ -44,6 +47,10 @@ export default function LevelPage() {
         questions = JapaneseQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else if (levelId.startsWith('english-')) {
         questions = EnglishQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('time-')) {
+        questions = TimeQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('shape-')) {
+        questions = ShapeQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else {
         questions = MathQuestionGenerator.generateQuestionsByLevelId(levelId);
       }
@@ -265,20 +272,22 @@ export default function LevelPage() {
     
     // Generate certificate if perfect score or high achievement
     const correctRate = (completedSession.correctAnswers / completedSession.questions.length) * 100;
+    const currentLevel = getAllLevels().find(l => l.id === levelId);
+    
     if (correctRate === 100) {
       const certificate = CertificateManager.generateCertificate(
         'perfect_score',
         newProgress,
-        { score: completedSession.score, level: level }
+        { score: completedSession.score, level: currentLevel }
       );
       setTimeout(() => {
         CertificateManager.showCertificateModal(certificate);
       }, 3000);
-    } else if (level && level.difficulty >= 3) {
+    } else if (currentLevel && currentLevel.difficulty >= 3) {
       const certificate = CertificateManager.generateCertificate(
         'level_completion',
         newProgress,
-        { score: completedSession.score, level: level }
+        { score: completedSession.score, level: currentLevel }
       );
       setTimeout(() => {
         CertificateManager.showCertificateModal(certificate);
@@ -458,6 +467,12 @@ export default function LevelPage() {
               {currentQuestion.type === 'english' && (
                 <div dangerouslySetInnerHTML={{ __html: generateEnglishVisual(currentQuestion) }} />
               )}
+              {(currentQuestion.subtype === 'time-reading') && (
+                <div dangerouslySetInnerHTML={{ __html: generateTimeVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype?.includes('shape')) && (
+                <div dangerouslySetInnerHTML={{ __html: generateShapeVisual(currentQuestion) }} />
+              )}
             </div>
 
             {/* Question with enhanced styling */}
@@ -480,15 +495,26 @@ export default function LevelPage() {
                 <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium shadow-lg ${
                   currentQuestion.type === 'math' ? 'bg-blue-100 text-blue-800 border-2 border-blue-200' :
                   currentQuestion.type === 'japanese' ? 'bg-red-100 text-red-800 border-2 border-red-200' :
-                  'bg-green-100 text-green-800 border-2 border-green-200'
+                  currentQuestion.type === 'english' ? 'bg-green-100 text-green-800 border-2 border-green-200' :
+                  currentQuestion.subtype === 'time-reading' ? 'bg-purple-100 text-purple-800 border-2 border-purple-200' :
+                  currentQuestion.subtype?.includes('shape') ? 'bg-orange-100 text-orange-800 border-2 border-orange-200' :
+                  'bg-gray-100 text-gray-800 border-2 border-gray-200'
                 }`}>
                   <span className="text-lg">
                     {currentQuestion.type === 'math' ? '🧮' :
-                     currentQuestion.type === 'japanese' ? '🇯🇵' : '🇺🇸'}
+                     currentQuestion.type === 'japanese' ? '🇯🇵' :
+                     currentQuestion.type === 'english' ? '🇺🇸' :
+                     currentQuestion.subtype === 'time-reading' ? '🕐' :
+                     currentQuestion.subtype?.includes('shape') ? '🔺' : 
+                     '📚'}
                   </span>
                   <span className="font-bold">
                     {currentQuestion.type === 'math' ? '算数' :
-                     currentQuestion.type === 'japanese' ? '国語' : '英語'}
+                     currentQuestion.type === 'japanese' ? '国語' :
+                     currentQuestion.type === 'english' ? '英語' :
+                     currentQuestion.subtype === 'time-reading' ? '時計' :
+                     currentQuestion.subtype?.includes('shape') ? '図形' :
+                     '学習'}
                   </span>
                   <Zap size={16} className="text-yellow-500" />
                   <span className="font-bold text-yellow-600">{currentQuestion.points}pt</span>
