@@ -249,6 +249,12 @@ export const generateShapeVisual = (question: Question): string => {
     return '';
   }
 
+  // For shape comparison questions, the content is already a complete HTML with styling
+  if (question.subtype === 'shape-comparison') {
+    return question.visualAid.content as string;
+  }
+
+  // For basic shape questions, wrap the SVG content
   return `
     <div style="display: flex; justify-content: center; margin-bottom: 24px;">
       <div style="background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border: 4px solid #dbeafe;">

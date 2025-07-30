@@ -542,6 +542,31 @@ export default function LevelPage() {
                         </button>
                       ))}
                     </div>
+                  ) : currentQuestion.subtype === 'time-reading' ? (
+                    // Time input with dropdowns - no additional input field needed
+                    <div className="text-center">
+                      <p className="text-lg text-gray-600 mb-4">
+                        時計の表示を見て、上のドロップダウンで時間を選択してください
+                      </p>
+                      <button
+                        onClick={() => {
+                          // Get values from dropdowns
+                          const hourSelect = document.querySelector('.time-hour-input') as HTMLSelectElement;
+                          const minuteSelect = document.querySelector('.time-minute-input') as HTMLSelectElement;
+                          
+                          if (hourSelect) {
+                            const hour = hourSelect.value;
+                            const minute = minuteSelect ? minuteSelect.value.padStart(2, '0') : '00';
+                            const timeAnswer = `${hour}:${minute}`;
+                            handleAnswerSubmit(timeAnswer);
+                          }
+                        }}
+                        className="kid-button text-2xl py-4 px-12 animate-pop-in"
+                        disabled={showResult}
+                      >
+                        答える！ 🕐
+                      </button>
+                    </div>
                   ) : currentQuestion.type === 'japanese' && 
                        (currentQuestion.subtype?.includes('writing') || currentQuestion.subtype?.includes('word')) ? (
                     // Drawing canvas for Japanese character writing
@@ -602,8 +627,8 @@ export default function LevelPage() {
               )}
             </div>
 
-            {/* Submit Button - Only show for non-multiple choice */}
-            {!currentQuestion.options && !showDrawingCanvas && (
+            {/* Submit Button - Only show for non-multiple choice and non-time reading */}
+            {!currentQuestion.options && !showDrawingCanvas && currentQuestion.subtype !== 'time-reading' && (
               <div className="text-center">
                 <button
                   onClick={(e) => {
