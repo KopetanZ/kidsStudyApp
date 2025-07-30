@@ -42,6 +42,34 @@ export const subjects: Subject[] = [
     emoji: '💰',
     color: 'from-yellow-400 to-yellow-600',
     description: 'おかねのかぞえかたを覚えよう！'
+  },
+  {
+    id: 'reading',
+    name: 'ぶんしょう',
+    emoji: '📚',
+    color: 'from-indigo-400 to-indigo-600',
+    description: 'ぶんしょうをよんでりかいしよう！'
+  },
+  {
+    id: 'time-calc',
+    name: 'じかんけいさん',
+    emoji: '⏰',
+    color: 'from-pink-400 to-pink-600',
+    description: 'じかんのけいさんをおぼえよう！'
+  },
+  {
+    id: 'science',
+    name: 'りか',
+    emoji: '🔬',
+    color: 'from-teal-400 to-teal-600',
+    description: 'しぜんやいきものをかんさつしよう！'
+  },
+  {
+    id: 'vocabulary',
+    name: 'ごい',
+    emoji: '💭',
+    color: 'from-violet-400 to-violet-600',
+    description: 'ことばのちからをつけよう！'
   }
 ];
 
@@ -486,8 +514,128 @@ export const moneyLevels: Level[] = [
   }
 ];
 
+export const readingLevels: Level[] = [
+  {
+    id: 'reading-level-1',
+    subjectId: 'reading',
+    name: 'たんぶんよみかい',
+    description: 'みじかいぶんしょうをよんでりかいしよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'reading-level-2',
+    subjectId: 'reading',
+    name: 'かんたんなおはなし',
+    description: 'みじかいおはなしをよんでりかいしよう',
+    difficulty: 2,
+    requiredPoints: 120,
+    isUnlocked: false
+  },
+  {
+    id: 'reading-level-3',
+    subjectId: 'reading',
+    name: 'かいわとものがたり',
+    description: 'かいわやふくざつなおはなしをりかいしよう',
+    difficulty: 3,
+    requiredPoints: 280,
+    isUnlocked: false
+  }
+];
+
+export const timeCalcLevels: Level[] = [
+  {
+    id: 'time-calc-level-1',
+    subjectId: 'time-calc',
+    name: 'じかんのながさ',
+    description: 'みじかいじかん・ながいじかんをりかいしよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'time-calc-level-2',
+    subjectId: 'time-calc',
+    name: 'じこくけいさん',
+    description: 'じこくとじこくから じかんをけいさんしよう',
+    difficulty: 2,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'time-calc-level-3',
+    subjectId: 'time-calc',
+    name: 'スケジュール',
+    description: '1にちのよていを かんがえよう',
+    difficulty: 3,
+    requiredPoints: 350,
+    isUnlocked: false
+  }
+];
+
+export const scienceLevels: Level[] = [
+  {
+    id: 'science-level-1',
+    subjectId: 'science',
+    name: 'いきものかんさつ',
+    description: 'みぢかないきものをかんさつしよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'science-level-2',
+    subjectId: 'science',
+    name: 'きせつとてんき',
+    description: 'きせつのへんかやてんきをまなぼう',
+    difficulty: 2,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'science-level-3',
+    subjectId: 'science',
+    name: 'からだとしぜん',
+    description: 'からだのしくみやしぜんのふしぎをしろう',
+    difficulty: 3,
+    requiredPoints: 350,
+    isUnlocked: false
+  }
+];
+
+export const vocabularyLevels: Level[] = [
+  {
+    id: 'vocabulary-level-1',
+    subjectId: 'vocabulary',
+    name: 'はんたいごとき',
+    description: 'はんたいのいみのことばをおぼえよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'vocabulary-level-2',
+    subjectId: 'vocabulary',
+    name: 'なかまわけ',
+    description: 'おなじなかまのことばをあつめよう',
+    difficulty: 2,
+    requiredPoints: 120,
+    isUnlocked: false
+  },
+  {
+    id: 'vocabulary-level-3',
+    subjectId: 'vocabulary',
+    name: 'きもちのことば',
+    description: 'きもちをあらわすことばをふやそう',
+    difficulty: 3,
+    requiredPoints: 280,
+    isUnlocked: false
+  }
+];
+
 export const getAllLevels = (): Level[] => {
-  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels];
+  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels];
 };
 
 export const getLevelsBySubject = (subjectId: string): Level[] => {
@@ -504,6 +652,14 @@ export const getLevelsBySubject = (subjectId: string): Level[] => {
       return shapeLevels;
     case 'money':
       return moneyLevels;
+    case 'reading':
+      return readingLevels;
+    case 'time-calc':
+      return timeCalcLevels;
+    case 'science':
+      return scienceLevels;
+    case 'vocabulary':
+      return vocabularyLevels;
     default:
       return [];
   }

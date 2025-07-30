@@ -8,6 +8,10 @@ import { EnglishQuestionGenerator, generateEnglishVisual } from '@/lib/english-g
 import { TimeQuestionGenerator, generateTimeVisual } from '@/lib/time-generator';
 import { ShapeQuestionGenerator, generateShapeVisual } from '@/lib/shape-generator';
 import { MoneyQuestionGenerator, generateMoneyVisual } from '@/lib/money-generator';
+import { ReadingQuestionGenerator, generateReadingVisual } from '@/lib/reading-generator';
+import { TimeCalculationQuestionGenerator, generateTimeCalculationVisual } from '@/lib/time-calculation-generator';
+import { ScienceQuestionGenerator, generateScienceVisual } from '@/lib/science-generator';
+import { VocabularyQuestionGenerator, generateVocabularyVisual } from '@/lib/vocabulary-generator';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
@@ -54,6 +58,14 @@ export default function LevelPage() {
         questions = ShapeQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else if (levelId.startsWith('money-')) {
         questions = MoneyQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('reading-')) {
+        questions = ReadingQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('time-calc-')) {
+        questions = TimeCalculationQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('science-')) {
+        questions = ScienceQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('vocabulary-')) {
+        questions = VocabularyQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else {
         questions = MathQuestionGenerator.generateQuestionsByLevelId(levelId);
       }
@@ -478,6 +490,18 @@ export default function LevelPage() {
               )}
               {(currentQuestion.subtype?.includes('money')) && (
                 <div dangerouslySetInnerHTML={{ __html: generateMoneyVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype?.includes('reading')) && (
+                <div dangerouslySetInnerHTML={{ __html: generateReadingVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype === 'time-calculation') && (
+                <div dangerouslySetInnerHTML={{ __html: generateTimeCalculationVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype === 'science-observation') && (
+                <div dangerouslySetInnerHTML={{ __html: generateScienceVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype?.includes('vocabulary')) && (
+                <div dangerouslySetInnerHTML={{ __html: generateVocabularyVisual(currentQuestion) }} />
               )}
             </div>
 
