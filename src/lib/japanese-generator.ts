@@ -1,4 +1,5 @@
 import { Question, JapaneseCharacter } from '@/types';
+import { KanjiQuestionGenerator } from './kanji-generator';
 
 export const hiraganaData: JapaneseCharacter[] = [
   // あ行
@@ -598,6 +599,11 @@ export class JapaneseQuestionGenerator {
         return this.generateKatakanaLevel3();
       case 'japanese-katakana-words':
         return this.generateKatakanaWords();
+      case 'japanese-kanji-g1-1':
+      case 'japanese-kanji-g1-2':
+      case 'japanese-kanji-g1-3':
+      case 'japanese-kanji-g2-1':
+        return KanjiQuestionGenerator.generateQuestionsByLevelId(levelId);
       case 'japanese-words-1':
         return this.generateWordsLevel1();
       default:
@@ -627,9 +633,17 @@ export const recognizeCharacter = async (_imageData: string): Promise<string> =>
   });
 };
 
+import { generateKanjiVisual } from './kanji-generator';
+
 export const generateJapaneseVisual = (question: Question): string => {
   if (!question.visualAid) {
     return '';
+  }
+
+  // 漢字学習の視覚化
+  const kanjiVisualTypes = ['kanji-with-meaning', 'kanji-stroke-guide', 'kanji-compound-display'];
+  if (kanjiVisualTypes.includes(question.visualAid.type)) {
+    return generateKanjiVisual(question);
   }
 
   // Handle the new hiragana-with-image visual aid type

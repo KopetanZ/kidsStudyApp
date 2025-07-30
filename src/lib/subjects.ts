@@ -304,6 +304,42 @@ export const japaneseLevels: Level[] = [
     isUnlocked: false
   },
   {
+    id: 'japanese-kanji-g1-1',
+    subjectId: 'japanese',
+    name: '漢字1年 数字と基本',
+    description: '一、二、三、日、月、火を覚えよう',
+    difficulty: 4,
+    requiredPoints: 450,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-kanji-g1-2',
+    subjectId: 'japanese',
+    name: '漢字1年 自然',
+    description: '水、木、金、土など自然の漢字',
+    difficulty: 5,
+    requiredPoints: 550,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-kanji-g1-3',
+    subjectId: 'japanese',
+    name: '漢字1年 人と体',
+    description: '人、口、手など体の漢字',
+    difficulty: 5,
+    requiredPoints: 650,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-kanji-g2-1',
+    subjectId: 'japanese',
+    name: '漢字2年 学校生活',
+    description: '学、校、年など学校の漢字',
+    difficulty: 6,
+    requiredPoints: 800,
+    isUnlocked: false
+  },
+  {
     id: 'japanese-words-1',
     subjectId: 'japanese',
     name: '単語練習',
