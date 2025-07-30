@@ -35,6 +35,13 @@ export const subjects: Subject[] = [
     emoji: '🔺',
     color: 'from-orange-400 to-orange-600',
     description: 'いろいろな図形を学ぼう！'
+  },
+  {
+    id: 'money',
+    name: 'おかね',
+    emoji: '💰',
+    color: 'from-yellow-400 to-yellow-600',
+    description: 'おかねのかぞえかたを覚えよう！'
   }
 ];
 
@@ -449,8 +456,38 @@ export const shapeLevels: Level[] = [
   }
 ];
 
+export const moneyLevels: Level[] = [
+  {
+    id: 'money-level-1',
+    subjectId: 'money',
+    name: 'こうかのにんしき',
+    description: '1えん、5えん、10えん、100えんを覚えよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'money-level-2',
+    subjectId: 'money',
+    name: 'こうかのくみあわせ',
+    description: 'いくつかのこうかを たしてみよう',
+    difficulty: 2,
+    requiredPoints: 120,
+    isUnlocked: false
+  },
+  {
+    id: 'money-level-3',
+    subjectId: 'money',
+    name: 'かいものとおつり',
+    description: 'かいものをして おつりを けいさんしよう',
+    difficulty: 3,
+    requiredPoints: 240,
+    isUnlocked: false
+  }
+];
+
 export const getAllLevels = (): Level[] => {
-  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels];
+  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels];
 };
 
 export const getLevelsBySubject = (subjectId: string): Level[] => {
@@ -465,6 +502,8 @@ export const getLevelsBySubject = (subjectId: string): Level[] => {
       return timeLevels;
     case 'shape':
       return shapeLevels;
+    case 'money':
+      return moneyLevels;
     default:
       return [];
   }

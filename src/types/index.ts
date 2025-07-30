@@ -28,7 +28,7 @@ export interface Question {
 }
 
 export interface VisualAid {
-  type: 'dots' | 'image' | 'text' | 'addition-dots' | 'subtraction-dots' | 'kuku-reading' | 'hiragana-with-image' | 'hiragana-quiz' | 'counting-dots' | 'number-display' | 'number-sequence' | 'place-value-teens' | 'number-comparison' | 'tens-visualization' | 'place-value-blocks' | 'carry-addition-sakura' | 'borrow-subtraction-blocks' | 'katakana-with-stroke' | 'time-input' | 'kanji-with-meaning' | 'kanji-stroke-guide' | 'kanji-compound-display' | 'kanji-with-furigana' | 'kanji-compound-with-furigana';
+  type: 'dots' | 'image' | 'text' | 'addition-dots' | 'subtraction-dots' | 'kuku-reading' | 'hiragana-with-image' | 'hiragana-quiz' | 'counting-dots' | 'number-display' | 'number-sequence' | 'place-value-teens' | 'number-comparison' | 'tens-visualization' | 'place-value-blocks' | 'carry-addition-sakura' | 'borrow-subtraction-blocks' | 'katakana-with-stroke' | 'time-input' | 'kanji-with-meaning' | 'kanji-stroke-guide' | 'kanji-compound-display' | 'kanji-with-furigana' | 'kanji-compound-with-furigana' | 'money-coin-display' | 'money-coin-counting' | 'money-combination-display' | 'money-shopping-display' | 'money-change-display';
   content: string | number | object;
   position?: 'left' | 'right' | 'top' | 'bottom';
 }

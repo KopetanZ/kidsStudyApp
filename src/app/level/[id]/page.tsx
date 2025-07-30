@@ -7,6 +7,7 @@ import { JapaneseQuestionGenerator, generateJapaneseVisual } from '@/lib/japanes
 import { EnglishQuestionGenerator, generateEnglishVisual } from '@/lib/english-generator';
 import { TimeQuestionGenerator, generateTimeVisual } from '@/lib/time-generator';
 import { ShapeQuestionGenerator, generateShapeVisual } from '@/lib/shape-generator';
+import { MoneyQuestionGenerator, generateMoneyVisual } from '@/lib/money-generator';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
@@ -51,6 +52,8 @@ export default function LevelPage() {
         questions = TimeQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else if (levelId.startsWith('shape-')) {
         questions = ShapeQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('money-')) {
+        questions = MoneyQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else {
         questions = MathQuestionGenerator.generateQuestionsByLevelId(levelId);
       }
@@ -458,7 +461,7 @@ export default function LevelPage() {
 
             {/* Visual Aid with enhanced animations */}
             <div className="mb-6 animate-float">
-              {currentQuestion.type === 'math' && (
+              {currentQuestion.type === 'math' && !currentQuestion.subtype?.includes('money') && (
                 <div dangerouslySetInnerHTML={{ __html: generateMathProblemVisual(currentQuestion) }} />
               )}
               {currentQuestion.type === 'japanese' && (
@@ -472,6 +475,9 @@ export default function LevelPage() {
               )}
               {(currentQuestion.subtype?.includes('shape')) && (
                 <div dangerouslySetInnerHTML={{ __html: generateShapeVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype?.includes('money')) && (
+                <div dangerouslySetInnerHTML={{ __html: generateMoneyVisual(currentQuestion) }} />
               )}
             </div>
 

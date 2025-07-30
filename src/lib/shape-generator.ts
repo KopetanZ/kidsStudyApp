@@ -18,7 +18,7 @@ export class ShapeQuestionGenerator {
         id: `shape-name-${index}`,
         type: 'math',
         subtype: 'shape-recognition',
-        question: `この図形の名前は何ですか？`,
+        question: `このかたちのなまえは？`,
         correctAnswer: shape.name,
         visualAid: {
           type: 'image',
@@ -34,7 +34,7 @@ export class ShapeQuestionGenerator {
           id: `shape-sides-${index}`,
           type: 'math',
           subtype: 'shape-counting',
-          question: `この図形には何本の辺がありますか？`,
+          question: `このかたちにはいくつのへんがある？`,
           correctAnswer: shape.sides.toString(),
           visualAid: {
             type: 'image',
@@ -71,7 +71,7 @@ export class ShapeQuestionGenerator {
         id: `shape-different-${i}`,
         type: 'math',
         subtype: 'shape-comparison',
-        question: `仲間はずれの図形はどれですか？`,
+        question: `なかまはずれのかたちはどれ？`,
         correctAnswer: `図形${differentPosition}`,
         options: ['図形1', '図形2', '図形3', '図形4'],
         visualAid: {
@@ -105,7 +105,7 @@ export class ShapeQuestionGenerator {
         id: `pattern-${index}`,
         type: 'math',
         subtype: 'pattern-recognition',
-        question: `パターンを見つけて、？に入る図形を選んでください`,
+        question: `かたちのならびをみつけて、？にはいるかたちをえらんでね`,
         correctAnswer: pattern.answer,
         options: shapes,
         visualAid: {

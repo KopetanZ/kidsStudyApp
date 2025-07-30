@@ -12,7 +12,7 @@ export class NumbersQuestionGenerator {
         id: `numbers-count-${i}`,
         type: 'math',
         subtype: 'number-recognition',
-        question: `●の数を数えてください`,
+        question: `●のかずをかぞえてね`,
         correctAnswer: i.toString(),
         visualAid: {
           type: 'counting-dots',
@@ -27,7 +27,7 @@ export class NumbersQuestionGenerator {
         id: `numbers-read-${i}`,
         type: 'math',
         subtype: 'number-reading',
-        question: `この数字を読んでください`,
+        question: `このすうじをよんでね`,
         correctAnswer: i.toString(),
         visualAid: {
           type: 'number-display',
@@ -44,7 +44,7 @@ export class NumbersQuestionGenerator {
         id: `numbers-sequence-${i}`,
         type: 'math',
         subtype: 'number-sequence',
-        question: `${i}の次の数は何ですか？`,
+        question: `${i}のつぎのかずは？`,
         correctAnswer: (i + 1).toString(),
         visualAid: {
           type: 'number-sequence',
@@ -69,7 +69,7 @@ export class NumbersQuestionGenerator {
         id: `numbers-teens-${i}`,
         type: 'math',
         subtype: 'number-place-value',
-        question: `この数字は何ですか？`,
+        question: `このかずはなんでしょう？`,
         correctAnswer: i.toString(),
         visualAid: {
           type: 'place-value-teens',
@@ -92,7 +92,7 @@ export class NumbersQuestionGenerator {
         id: `numbers-compare-${index}`,
         type: 'math',
         subtype: 'number-comparison',
-        question: `${comp.a}と${comp.b}、どちらが大きいですか？`,
+        question: `${comp.a}と${comp.b}、どちらがおおきい？`,
         correctAnswer: larger.toString(),
         visualAid: {
           type: 'number-comparison',
@@ -117,7 +117,7 @@ export class NumbersQuestionGenerator {
         id: `numbers-tens-${num}`,
         type: 'math',
         subtype: 'number-tens',
-        question: `この数字は何ですか？`,
+        question: `このかずはなあに？`,
         correctAnswer: num.toString(),
         visualAid: {
           type: 'tens-visualization',

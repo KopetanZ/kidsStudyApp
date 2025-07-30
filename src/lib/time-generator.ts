@@ -10,7 +10,7 @@ export class TimeQuestionGenerator {
         id: `time-hour-${hour}`,
         type: 'japanese',
         subtype: 'time-reading',
-        question: `この時計は何時ですか？`,
+        question: `このとけいはなんじ？`,
         correctAnswer: `${hour}:00`,
         visualAid: {
           type: 'time-input',
@@ -39,7 +39,7 @@ export class TimeQuestionGenerator {
         id: `time-half-${hour}`,
         type: 'japanese',
         subtype: 'time-reading',
-        question: `この時計は何時何分ですか？`,
+        question: `このとけいはなんじなんぷん？`,
         correctAnswer: `${hour}:30`,
         visualAid: {
           type: 'time-input',
@@ -79,7 +79,7 @@ export class TimeQuestionGenerator {
         id: `time-quarter-${index}`,
         type: 'japanese',
         subtype: 'time-reading',
-        question: `この時計は何時何分ですか？`,
+        question: `このとけいはなんじなんぷん？`,
         correctAnswer: `${time.hour}:${time.minute.toString().padStart(2, '0')}`,
         visualAid: {
           type: 'time-input',
