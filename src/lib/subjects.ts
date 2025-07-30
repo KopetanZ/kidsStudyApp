@@ -70,6 +70,20 @@ export const subjects: Subject[] = [
     emoji: '💭',
     color: 'from-violet-400 to-violet-600',
     description: 'ことばのちからをつけよう！'
+  },
+  {
+    id: 'programming',
+    name: 'プログラミング',
+    emoji: '💻',
+    color: 'from-gray-400 to-gray-600',
+    description: 'かんがえるちからをそだてよう！'
+  },
+  {
+    id: 'digital-literacy',
+    name: 'デジタル',
+    emoji: '📱',
+    color: 'from-emerald-400 to-emerald-600',
+    description: 'あんぜんにつかうほうほうをまなぼう！'
   }
 ];
 
@@ -634,8 +648,68 @@ export const vocabularyLevels: Level[] = [
   }
 ];
 
+export const programmingLevels: Level[] = [
+  {
+    id: 'programming-level-1',
+    subjectId: 'programming',
+    name: 'じゅんばんとてじゅん',
+    description: 'ものごとのじゅんばんをかんがえよう',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'programming-level-2',
+    subjectId: 'programming',
+    name: 'くりかえしとじょうけん',
+    description: 'くりかえしやじょうけんをまなぼう',
+    difficulty: 2,
+    requiredPoints: 120,
+    isUnlocked: false
+  },
+  {
+    id: 'programming-level-3',
+    subjectId: 'programming',
+    name: 'もんだいかいけつ',
+    description: 'まちがいをみつけてなおそう',
+    difficulty: 3,
+    requiredPoints: 300,
+    isUnlocked: false
+  }
+];
+
+export const digitalLiteracyLevels: Level[] = [
+  {
+    id: 'internet-literacy',
+    subjectId: 'digital-literacy',
+    name: 'インターネット',
+    description: 'インターネットのあんぜんなつかいかた',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'youtube-literacy',
+    subjectId: 'digital-literacy',
+    name: 'YouTube',
+    description: 'YouTubeのあんぜんなみかた',
+    difficulty: 2,
+    requiredPoints: 60,
+    isUnlocked: false
+  },
+  {
+    id: 'sns-literacy',
+    subjectId: 'digital-literacy',
+    name: 'SNS',
+    description: 'SNSのきけんとたいさく',
+    difficulty: 3,
+    requiredPoints: 120,
+    isUnlocked: false
+  }
+];
+
 export const getAllLevels = (): Level[] => {
-  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels];
+  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels, ...programmingLevels, ...digitalLiteracyLevels];
 };
 
 export const getLevelsBySubject = (subjectId: string): Level[] => {
@@ -660,6 +734,10 @@ export const getLevelsBySubject = (subjectId: string): Level[] => {
       return scienceLevels;
     case 'vocabulary':
       return vocabularyLevels;
+    case 'programming':
+      return programmingLevels;
+    case 'digital-literacy':
+      return digitalLiteracyLevels;
     default:
       return [];
   }

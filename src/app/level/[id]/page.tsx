@@ -12,6 +12,8 @@ import { ReadingQuestionGenerator, generateReadingVisual } from '@/lib/reading-g
 import { TimeCalculationQuestionGenerator, generateTimeCalculationVisual } from '@/lib/time-calculation-generator';
 import { ScienceQuestionGenerator, generateScienceVisual } from '@/lib/science-generator';
 import { VocabularyQuestionGenerator, generateVocabularyVisual } from '@/lib/vocabulary-generator';
+import { ProgrammingQuestionGenerator, generateProgrammingVisual } from '@/lib/programming-generator';
+import { DigitalLiteracyQuestionGenerator, generateDigitalLiteracyVisual } from '@/lib/digital-literacy-generator';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
@@ -66,6 +68,10 @@ export default function LevelPage() {
         questions = ScienceQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else if (levelId.startsWith('vocabulary-')) {
         questions = VocabularyQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('programming-')) {
+        questions = ProgrammingQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.includes('literacy')) {
+        questions = DigitalLiteracyQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else {
         questions = MathQuestionGenerator.generateQuestionsByLevelId(levelId);
       }
@@ -502,6 +508,12 @@ export default function LevelPage() {
               )}
               {(currentQuestion.subtype?.includes('vocabulary')) && (
                 <div dangerouslySetInnerHTML={{ __html: generateVocabularyVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype?.includes('programming')) && (
+                <div dangerouslySetInnerHTML={{ __html: generateProgrammingVisual(currentQuestion) }} />
+              )}
+              {(currentQuestion.subtype?.includes('digital-literacy')) && (
+                <div dangerouslySetInnerHTML={{ __html: generateDigitalLiteracyVisual(currentQuestion) }} />
               )}
             </div>
 
