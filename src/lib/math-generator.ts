@@ -1,5 +1,7 @@
 import { Question } from '@/types';
 import { NumbersQuestionGenerator } from './numbers-generator';
+import { TimeQuestionGenerator } from './time-generator';
+import { ShapeQuestionGenerator } from './shape-generator';
 
 export class MathQuestionGenerator {
   // 繰り上がりの足し算（1年生2学期の最重要単元）
@@ -552,6 +554,14 @@ export class MathQuestionGenerator {
         return this.generateMultiplicationLevel1();
       case 'math-division-1':
         return this.generateDivisionLevel1();
+      case 'time-reading-1':
+      case 'time-reading-2':
+      case 'time-reading-3':
+        return TimeQuestionGenerator.generateQuestionsByLevelId(levelId);
+      case 'shape-basic':
+      case 'shape-comparison':
+      case 'shape-pattern':
+        return ShapeQuestionGenerator.generateQuestionsByLevelId(levelId);
       default:
         return this.generateAdditionLevel1();
     }
@@ -568,10 +578,22 @@ export class MathQuestionGenerator {
 }
 
 import { generateNumbersVisual } from './numbers-generator';
+import { generateTimeVisual } from './time-generator';
+import { generateShapeVisual } from './shape-generator';
 
 export const generateMathProblemVisual = (question: Question): string => {
   if (!question.visualAid) {
     return '';
+  }
+
+  // 時計問題の視覚化
+  if (question.visualAid.type === 'time-input' || (question.subtype === 'time-reading' && question.visualAid.type === 'image')) {
+    return generateTimeVisual(question);
+  }
+
+  // 図形問題の視覚化
+  if ((question.subtype?.includes('shape') || question.subtype?.includes('pattern')) && question.visualAid.type === 'image') {
+    return generateShapeVisual(question);
   }
 
   // 数理解問題の視覚化

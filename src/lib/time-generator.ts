@@ -11,10 +11,16 @@ export class TimeQuestionGenerator {
         type: 'japanese',
         subtype: 'time-reading',
         question: `この時計は何時ですか？`,
-        correctAnswer: `${hour}時`,
+        correctAnswer: `${hour}:00`,
         visualAid: {
-          type: 'image',
-          content: this.generateClockHTML(hour, 0),
+          type: 'time-input',
+          content: {
+            clock: this.generateClockHTML(hour, 0),
+            correctHour: hour,
+            correctMinute: 0,
+            showMinute: false,
+            template: 'X時'
+          },
           position: 'top'
         },
         points: 15
@@ -34,10 +40,16 @@ export class TimeQuestionGenerator {
         type: 'japanese',
         subtype: 'time-reading',
         question: `この時計は何時何分ですか？`,
-        correctAnswer: `${hour}時30分`,
+        correctAnswer: `${hour}:30`,
         visualAid: {
-          type: 'image',
-          content: this.generateClockHTML(hour, 30),
+          type: 'time-input',
+          content: {
+            clock: this.generateClockHTML(hour, 30),
+            correctHour: hour,
+            correctMinute: 30,
+            showMinute: true,
+            template: 'X時Y分'
+          },
           position: 'top'
         },
         points: 20
@@ -52,14 +64,14 @@ export class TimeQuestionGenerator {
     
     // Quarter hour reading
     const times = [
-      { hour: 3, minute: 15, text: '3時15分' },
-      { hour: 6, minute: 45, text: '6時45分' },
-      { hour: 9, minute: 15, text: '9時15分' },
-      { hour: 12, minute: 45, text: '12時45分' },
-      { hour: 2, minute: 15, text: '2時15分' },
-      { hour: 4, minute: 45, text: '4時45分' },
-      { hour: 7, minute: 15, text: '7時15分' },
-      { hour: 10, minute: 45, text: '10時45分' }
+      { hour: 3, minute: 15 },
+      { hour: 6, minute: 45 },
+      { hour: 9, minute: 15 },
+      { hour: 12, minute: 45 },
+      { hour: 2, minute: 15 },
+      { hour: 4, minute: 45 },
+      { hour: 7, minute: 15 },
+      { hour: 10, minute: 45 }
     ];
 
     times.forEach((time, index) => {
@@ -68,10 +80,16 @@ export class TimeQuestionGenerator {
         type: 'japanese',
         subtype: 'time-reading',
         question: `この時計は何時何分ですか？`,
-        correctAnswer: time.text,
+        correctAnswer: `${time.hour}:${time.minute.toString().padStart(2, '0')}`,
         visualAid: {
-          type: 'image',
-          content: this.generateClockHTML(time.hour, time.minute),
+          type: 'time-input',
+          content: {
+            clock: this.generateClockHTML(time.hour, time.minute),
+            correctHour: time.hour,
+            correctMinute: time.minute,
+            showMinute: true,
+            template: 'X時Y分'
+          },
           position: 'top'
         },
         points: 25
@@ -159,18 +177,106 @@ export class TimeQuestionGenerator {
 }
 
 export const generateTimeVisual = (question: Question): string => {
-  if (!question.visualAid || question.visualAid.type !== 'image') {
+  if (!question.visualAid) {
     return '';
   }
 
-  return `
-    <div style="display: flex; justify-content: center; margin-bottom: 24px;">
-      <div style="background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border: 4px solid #dbeafe;">
-        ${question.visualAid.content}
-        <div style="text-align: center; margin-top: 15px; font-size: 14px; color: #6b7280;">
-          時計を読んでください
+  // Handle new time-input visual aid type
+  if (question.visualAid.type === 'time-input') {
+    const { clock, template, showMinute } = question.visualAid.content as {
+      clock: string;
+      correctHour: number;
+      correctMinute: number;
+      showMinute: boolean;
+      template: string;
+    };
+
+    return `
+      <div class="bg-blue-50 rounded-2xl p-6 mb-4">
+        <div class="text-center text-lg font-bold text-gray-700 mb-4">時計を読んでみよう！</div>
+        
+        <!-- Clock Display -->
+        <div class="flex justify-center mb-6">
+          <div class="bg-white rounded-2xl p-6 shadow-lg border-4 border-blue-200">
+            ${clock}
+          </div>
+        </div>
+        
+        <!-- Time Input Interface -->
+        <div class="bg-white rounded-xl p-6 shadow-lg">
+          <div class="text-center mb-4">
+            <div class="text-lg font-bold text-gray-700 mb-2">時間を選んでください</div>
+            <div class="text-sm text-gray-600">${template.replace('X', '*').replace('Y', showMinute ? '*' : '')}</div>
+          </div>
+          
+          <div class="flex items-center justify-center gap-4">
+            <!-- Hour Selector -->
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-600 mb-2">時</div>
+              <div class="relative">
+                <select class="time-hour-input appearance-none bg-blue-100 border-2 border-blue-300 rounded-lg px-4 py-2 text-xl font-bold text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  ${Array.from({length: 12}, (_, i) => i + 1).map(h => 
+                    `<option value="${h}">${h}</option>`
+                  ).join('')}
+                </select>
+                <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-2xl font-bold text-gray-400">:</div>
+            
+            <!-- Minute Selector -->
+            ${showMinute ? `
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-600 mb-2">分</div>
+              <div class="relative">
+                <select class="time-minute-input appearance-none bg-green-100 border-2 border-green-300 rounded-lg px-4 py-2 text-xl font-bold text-center focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  ${[0, 15, 30, 45].map(m => 
+                    `<option value="${m}">${m.toString().padStart(2, '0')}</option>`
+                  ).join('')}
+                </select>
+                <div class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            ` : `
+            <div class="text-center">
+              <div class="text-sm font-bold text-gray-400 mb-2">分</div>
+              <div class="bg-gray-100 border-2 border-gray-300 rounded-lg px-4 py-2 text-xl font-bold text-center text-gray-400">
+                00
+              </div>
+            </div>
+            `}
+          </div>
+          
+          <div class="text-center mt-4 text-sm text-gray-500">
+            上の時間選択で時計の時間を合わせてください
+          </div>
         </div>
       </div>
-    </div>
-  `;
+    `;
+  }
+
+  // Handle legacy image type
+  if (question.visualAid.type === 'image') {
+    return `
+      <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+        <div style="background: white; border-radius: 16px; padding: 32px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border: 4px solid #dbeafe;">
+          ${question.visualAid.content}
+          <div style="text-align: center; margin-top: 15px; font-size: 14px; color: #6b7280;">
+            時計を読んでください
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  return '';
 };

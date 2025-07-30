@@ -58,16 +58,25 @@ export class ShapeQuestionGenerator {
       const sameShape = shapes[Math.floor(Math.random() * shapes.length)];
       const differentShape = shapes.find(s => s !== sameShape)!;
       
+      // Create array with 3 same shapes and 1 different shape
+      const shapeArray = [sameShape, sameShape, sameShape, differentShape];
+      
+      // Shuffle the array to randomize positions
+      const shuffledShapes = this.shuffleArray([...shapeArray]);
+      
+      // Find the position of the different shape (1-indexed)
+      const differentPosition = shuffledShapes.findIndex(shape => shape === differentShape) + 1;
+      
       questions.push({
         id: `shape-different-${i}`,
         type: 'math',
         subtype: 'shape-comparison',
         question: `仲間はずれの図形はどれですか？`,
-        correctAnswer: differentShape,
-        options: [sameShape, sameShape, sameShape, differentShape].map((shape, idx) => `図形${idx + 1}`),
+        correctAnswer: `図形${differentPosition}`,
+        options: ['図形1', '図形2', '図形3', '図形4'],
         visualAid: {
           type: 'image',
-          content: this.generateShapeComparisonHTML([sameShape, sameShape, sameShape, differentShape]),
+          content: this.generateShapeComparisonHTML(shuffledShapes),
           position: 'top'
         },
         points: 25
@@ -177,13 +186,22 @@ export class ShapeQuestionGenerator {
     const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'];
     
     return `
-      <div style="display: flex; justify-content: center; gap: 20px; margin: 20px;">
-        ${shapes.map((shape, index) => `
-          <div style="text-align: center;">
-            <div style="margin-bottom: 8px; font-weight: bold;">図形${index + 1}</div>
-            ${this.generateShapeHTML(shape, colors[index], 80)}
-          </div>
-        `).join('')}
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <div class="text-center text-lg font-bold text-gray-700 mb-4">どれが仲間外れでしょうか？</div>
+        <div class="grid grid-cols-2 gap-6 max-w-md mx-auto">
+          ${shapes.map((shape, index) => `
+            <div class="text-center bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
+              <div class="text-xl font-bold text-gray-800 mb-3">図形${index + 1}</div>
+              <div class="flex justify-center">
+                ${this.generateShapeHTML(shape, colors[index], 100)}
+              </div>
+              <div class="text-sm text-gray-600 mt-2">${shape}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="text-center mt-4 text-sm text-gray-500">
+          4つの図形の中で、1つだけ違う図形があります
+        </div>
       </div>
     `;
   }
