@@ -28,7 +28,7 @@ export interface Question {
 }
 
 export interface VisualAid {
-  type: 'dots' | 'image' | 'text' | 'addition-dots' | 'subtraction-dots' | 'kuku-reading' | 'hiragana-with-image';
+  type: 'dots' | 'image' | 'text' | 'addition-dots' | 'subtraction-dots' | 'kuku-reading' | 'hiragana-with-image' | 'hiragana-quiz';
   content: string | number | object;
   position?: 'left' | 'right' | 'top' | 'bottom';
 }

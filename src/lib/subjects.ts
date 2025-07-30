@@ -61,9 +61,36 @@ export const mathLevels: Level[] = [
     id: 'math-addition-3',
     subjectId: 'math',
     name: '足し算 レベル3',
-    description: '二桁の足し算',
+    description: '二桁の足し算（繰り上がりなし）',
     difficulty: 3,
     requiredPoints: 250,
+    isUnlocked: false
+  },
+  {
+    id: 'math-addition-4',
+    subjectId: 'math',
+    name: '足し算 レベル4',
+    description: '二桁の足し算（繰り上がりあり）',
+    difficulty: 4,
+    requiredPoints: 400,
+    isUnlocked: false
+  },
+  {
+    id: 'math-addition-5',
+    subjectId: 'math',
+    name: '足し算 レベル5',
+    description: '三桁の足し算（繰り上がりなし）',
+    difficulty: 5,
+    requiredPoints: 600,
+    isUnlocked: false
+  },
+  {
+    id: 'math-addition-6',
+    subjectId: 'math',
+    name: '足し算 レベル6',
+    description: '三桁の足し算（繰り上がりあり）',
+    difficulty: 6,
+    requiredPoints: 800,
     isUnlocked: false
   },
   {
@@ -82,6 +109,42 @@ export const mathLevels: Level[] = [
     description: '視覚サポートなしの引き算',
     difficulty: 3,
     requiredPoints: 300,
+    isUnlocked: false
+  },
+  {
+    id: 'math-subtraction-3',
+    subjectId: 'math',
+    name: '引き算 レベル3',
+    description: '二桁の引き算（繰り下がりなし）',
+    difficulty: 4,
+    requiredPoints: 450,
+    isUnlocked: false
+  },
+  {
+    id: 'math-subtraction-4',
+    subjectId: 'math',
+    name: '引き算 レベル4',
+    description: '二桁の引き算（繰り下がりあり）',
+    difficulty: 5,
+    requiredPoints: 650,
+    isUnlocked: false
+  },
+  {
+    id: 'math-subtraction-5',
+    subjectId: 'math',
+    name: '引き算 レベル5',
+    description: '三桁の引き算（繰り下がりなし）',
+    difficulty: 6,
+    requiredPoints: 850,
+    isUnlocked: false
+  },
+  {
+    id: 'math-subtraction-6',
+    subjectId: 'math',
+    name: '引き算 レベル6',
+    description: '三桁の引き算（繰り下がりあり）',
+    difficulty: 7,
+    requiredPoints: 1100,
     isUnlocked: false
   },
   {
@@ -130,6 +193,33 @@ export const japaneseLevels: Level[] = [
     description: 'ま、や、ら、わ行のひらがなを書こう',
     difficulty: 3,
     requiredPoints: 300,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-hiragana-quiz-1',
+    subjectId: 'japanese',
+    name: 'ひらがなクイズ あ〜さ行',
+    description: '絵を見て文字を当てよう（あ〜さ行）',
+    difficulty: 2,
+    requiredPoints: 200,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-hiragana-quiz-2',
+    subjectId: 'japanese',
+    name: 'ひらがなクイズ た〜は行',
+    description: '絵を見て文字を当てよう（た〜は行）',
+    difficulty: 3,
+    requiredPoints: 350,
+    isUnlocked: false
+  },
+  {
+    id: 'japanese-hiragana-quiz-3',
+    subjectId: 'japanese',
+    name: 'ひらがなクイズ ま〜わ行',
+    description: '絵を見て文字を当てよう（ま〜わ行）',
+    difficulty: 4,
+    requiredPoints: 500,
     isUnlocked: false
   },
   {

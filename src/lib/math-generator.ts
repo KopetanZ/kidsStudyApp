@@ -74,9 +74,14 @@ export class MathQuestionGenerator {
   static generateAdditionLevel3(): Question[] {
     const questions: Question[] = [];
     
-    for (let i = 0; i < 10; i++) {
-      const num1 = Math.floor(Math.random() * 90) + 10; // 10-99
-      const num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+    // 二桁の足し算（繰り上がりなし）
+    for (let i = 0; i < 12; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+        num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+      } while ((num1 % 10) + (num2 % 10) >= 10 || Math.floor(num1 / 10) + Math.floor(num2 / 10) >= 10); // 繰り上がりなし
+      
       const result = num1 + num2;
       
       questions.push({
@@ -86,6 +91,84 @@ export class MathQuestionGenerator {
         question: `${num1} + ${num2} = 〇`,
         correctAnswer: result.toString(),
         points: 25
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateAdditionLevel4(): Question[] {
+    const questions: Question[] = [];
+    
+    // 二桁の足し算（繰り上がりあり）
+    for (let i = 0; i < 12; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 90) + 10; // 10-99  
+        num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+      } while ((num1 % 10) + (num2 % 10) < 10); // 繰り上がりありに限定
+      
+      const result = num1 + num2;
+      
+      questions.push({
+        id: `math-add-4-${i}`,
+        type: 'math',
+        subtype: 'addition',
+        question: `${num1} + ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 30
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateAdditionLevel5(): Question[] {
+    const questions: Question[] = [];
+    
+    // 三桁の足し算（繰り上がりなし）
+    for (let i = 0; i < 10; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 900) + 100; // 100-999
+        num2 = Math.floor(Math.random() * 900) + 100; // 100-999
+      } while (
+        (num1 % 10) + (num2 % 10) >= 10 || 
+        (Math.floor(num1 / 10) % 10) + (Math.floor(num2 / 10) % 10) >= 10 ||
+        Math.floor(num1 / 100) + Math.floor(num2 / 100) >= 10
+      ); // 全ての桁で繰り上がりなし
+      
+      const result = num1 + num2;
+      
+      questions.push({
+        id: `math-add-5-${i}`,
+        type: 'math',
+        subtype: 'addition',
+        question: `${num1} + ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 35
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateAdditionLevel6(): Question[] {
+    const questions: Question[] = [];
+    
+    // 三桁の足し算（繰り上がりあり）
+    for (let i = 0; i < 10; i++) {
+      const num1 = Math.floor(Math.random() * 900) + 100; // 100-999
+      const num2 = Math.floor(Math.random() * 900) + 100; // 100-999
+      const result = num1 + num2;
+      
+      questions.push({
+        id: `math-add-6-${i}`,
+        type: 'math',
+        subtype: 'addition',
+        question: `${num1} + ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 40
       });
     }
 
@@ -155,6 +238,115 @@ export class MathQuestionGenerator {
         question: questionText,
         correctAnswer,
         points: 18
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateSubtractionLevel3(): Question[] {
+    const questions: Question[] = [];
+    
+    // 二桁の引き算（繰り下がりなし）
+    for (let i = 0; i < 12; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+        num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+      } while (num1 <= num2 || (num1 % 10) < (num2 % 10) || Math.floor(num1 / 10) < Math.floor(num2 / 10)); // 繰り下がりなし
+      
+      const result = num1 - num2;
+      
+      questions.push({
+        id: `math-sub-3-${i}`,
+        type: 'math',
+        subtype: 'subtraction',
+        question: `${num1} - ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 25
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateSubtractionLevel4(): Question[] {
+    const questions: Question[] = [];
+    
+    // 二桁の引き算（繰り下がりあり）
+    for (let i = 0; i < 12; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+        num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+      } while (num1 <= num2 || (num1 % 10) >= (num2 % 10)); // 繰り下がりありに限定
+      
+      const result = num1 - num2;
+      
+      questions.push({
+        id: `math-sub-4-${i}`,
+        type: 'math',
+        subtype: 'subtraction',
+        question: `${num1} - ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 30
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateSubtractionLevel5(): Question[] {
+    const questions: Question[] = [];
+    
+    // 三桁の引き算（繰り下がりなし）
+    for (let i = 0; i < 10; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 900) + 100; // 100-999
+        num2 = Math.floor(Math.random() * 900) + 100; // 100-999
+      } while (
+        num1 <= num2 ||
+        (num1 % 10) < (num2 % 10) ||
+        (Math.floor(num1 / 10) % 10) < (Math.floor(num2 / 10) % 10) ||
+        Math.floor(num1 / 100) < Math.floor(num2 / 100)
+      ); // 全ての桁で繰り下がりなし
+      
+      const result = num1 - num2;
+      
+      questions.push({
+        id: `math-sub-5-${i}`,
+        type: 'math',
+        subtype: 'subtraction',
+        question: `${num1} - ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 35
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  static generateSubtractionLevel6(): Question[] {
+    const questions: Question[] = [];
+    
+    // 三桁の引き算（繰り下がりあり）
+    for (let i = 0; i < 10; i++) {
+      let num1, num2;
+      do {
+        num1 = Math.floor(Math.random() * 900) + 100; // 100-999
+        num2 = Math.floor(Math.random() * 900) + 100; // 100-999
+      } while (num1 <= num2);
+      
+      const result = num1 - num2;
+      
+      questions.push({
+        id: `math-sub-6-${i}`,
+        type: 'math',
+        subtype: 'subtraction',
+        question: `${num1} - ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        points: 40
       });
     }
 
@@ -247,10 +439,24 @@ export class MathQuestionGenerator {
         return this.generateAdditionLevel2();
       case 'math-addition-3':
         return this.generateAdditionLevel3();
+      case 'math-addition-4':
+        return this.generateAdditionLevel4();
+      case 'math-addition-5':
+        return this.generateAdditionLevel5();
+      case 'math-addition-6':
+        return this.generateAdditionLevel6();
       case 'math-subtraction-1':
         return this.generateSubtractionLevel1();
       case 'math-subtraction-2':
         return this.generateSubtractionLevel2();
+      case 'math-subtraction-3':
+        return this.generateSubtractionLevel3();
+      case 'math-subtraction-4':
+        return this.generateSubtractionLevel4();
+      case 'math-subtraction-5':
+        return this.generateSubtractionLevel5();
+      case 'math-subtraction-6':
+        return this.generateSubtractionLevel6();
       case 'math-multiplication-1':
         return this.generateMultiplicationLevel1();
       case 'math-division-1':
@@ -315,7 +521,7 @@ export const generateMathProblemVisual = (question: Question): string => {
           </div>
         </div>
         <div class="text-center text-sm text-gray-600">
-          ${num1} + ${num2} = ${result}
+          ${num1} + ${num2} = 〇
         </div>
       </div>
     `;
@@ -375,7 +581,7 @@ export const generateMathProblemVisual = (question: Question): string => {
           </div>
         </div>
         <div class="text-center text-sm text-gray-600 mt-4">
-          ${num1} - ${num2} = ${result}
+          ${num1} - ${num2} = 〇
         </div>
       </div>
     `;

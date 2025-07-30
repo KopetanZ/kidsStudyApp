@@ -233,6 +233,88 @@ export class JapaneseQuestionGenerator {
     return this.shuffleArray(questions).slice(0, 10);
   }
 
+  // クイズ形式のひらがなレベル - 答えを隠して文字を当てる
+  static generateHiraganaQuizLevel1(): Question[] {
+    const questions: Question[] = [];
+    const characters = hiraganaData.slice(0, 15); // あ〜さ行
+    
+    characters.forEach((char, index) => {
+      questions.push({
+        id: `jp-hira-quiz-1-${index}`,
+        type: 'japanese',
+        subtype: 'hiragana-quiz',
+        question: `〇の中に入る文字を書いてください`,
+        correctAnswer: char.character,
+        visualAid: {
+          type: 'hiragana-quiz',
+          content: {
+            image: char.image,
+            hiddenCharacter: char.character,
+            example: this.getExampleWord(char.character)
+          },
+          position: 'top'
+        },
+        points: 20
+      });
+    });
+
+    return this.shuffleArray(questions).slice(0, 10);
+  }
+
+  static generateHiraganaQuizLevel2(): Question[] {
+    const questions: Question[] = [];
+    const characters = hiraganaData.slice(15, 30); // た〜は行
+    
+    characters.forEach((char, index) => {
+      questions.push({
+        id: `jp-hira-quiz-2-${index}`,
+        type: 'japanese',
+        subtype: 'hiragana-quiz',
+        question: `〇の中に入る文字を書いてください`,
+        correctAnswer: char.character,
+        visualAid: {
+          type: 'hiragana-quiz',
+          content: {
+            image: char.image,
+            hiddenCharacter: char.character,
+            example: this.getExampleWord(char.character)
+          },
+          position: 'top'
+        },
+        points: 20
+      });
+    });
+
+    return this.shuffleArray(questions).slice(0, 10);
+  }
+
+  static generateHiraganaQuizLevel3(): Question[] {
+    const questions: Question[] = [];
+    const characters = hiraganaData.slice(30); // ま〜わ行
+    
+    characters.forEach((char, index) => {
+      questions.push({
+        id: `jp-hira-quiz-3-${index}`,
+        type: 'japanese',
+        subtype: 'hiragana-quiz',
+        question: `〇の中に入る文字を書いてください`,
+        correctAnswer: char.character,
+        visualAid: {
+          type: 'hiragana-quiz',
+          content: {
+            image: char.image,
+            hiddenCharacter: char.character,
+            example: this.getExampleWord(char.character)
+          },
+          position: 'top'
+        },
+        points: 20
+      });
+    });
+
+    return this.shuffleArray(questions).slice(0, 10);
+  }
+
   static generateKatakanaLevel1(): Question[] {
     const questions: Question[] = [];
     const characters = katakanaData; // ア〜サ行（available data）
@@ -295,6 +377,12 @@ export class JapaneseQuestionGenerator {
         return this.generateHiraganaLevel2();
       case 'japanese-hiragana-3':
         return this.generateHiraganaLevel3();
+      case 'japanese-hiragana-quiz-1':
+        return this.generateHiraganaQuizLevel1();
+      case 'japanese-hiragana-quiz-2':
+        return this.generateHiraganaQuizLevel2();
+      case 'japanese-hiragana-quiz-3':
+        return this.generateHiraganaQuizLevel3();
       case 'japanese-katakana-1':
         return this.generateKatakanaLevel1();
       case 'japanese-words-1':
@@ -359,6 +447,38 @@ export const generateJapaneseVisual = (question: Question): string => {
         <div class="text-center">
           <div class="text-lg text-gray-600 mb-2">${example}</div>
           <div class="text-sm text-gray-500">絵と文字をおぼえて書いてみよう！</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Handle hiragana quiz visual aid type
+  if (question.visualAid.type === 'hiragana-quiz') {
+    const { image, example } = question.visualAid.content as {
+      image: string;
+      hiddenCharacter: string;
+      example: string;
+    };
+
+    return `
+      <div class="bg-blue-50 rounded-2xl p-6 mb-4">
+        <div class="text-center text-lg font-bold text-gray-700 mb-4">どの文字が入るかな？</div>
+        <div class="flex items-center justify-center gap-6 mb-4">
+          <div class="bg-white rounded-xl p-4 shadow-lg border-4 border-pink-200">
+            <div class="text-6xl text-center animate-bounce-in">
+              ${image}
+            </div>
+          </div>
+          <div class="text-4xl font-bold text-gray-600">+</div>
+          <div class="bg-white rounded-xl p-4 shadow-lg border-4 border-orange-200">
+            <div class="text-6xl text-center animate-bounce-in font-bold text-orange-600" style="animation-delay: 0.2s">
+              〇
+            </div>
+          </div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg text-gray-600 mb-2">${example}</div>
+          <div class="text-sm text-gray-500">絵を見て〇に入る文字を書いてみよう！</div>
         </div>
       </div>
     `;
