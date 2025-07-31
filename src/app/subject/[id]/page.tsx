@@ -5,9 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { subjects, getLevelsBySubject } from '@/lib/subjects';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
+import { LevelVisibilityManager } from '@/lib/level-visibility';
 import { Subject, Level, UserProgress } from '@/types';
 import Link from 'next/link';
-import { ArrowLeft, Lock, Star, Trophy } from 'lucide-react';
+import { ArrowLeft, Lock, Star, Trophy, Eye } from 'lucide-react';
 
 export default function SubjectPage() {
   const params = useParams();
@@ -28,7 +29,10 @@ export default function SubjectPage() {
       }
       
       setSubject(foundSubject);
-      setLevels(getLevelsBySubject(subjectId));
+      
+      const allLevels = getLevelsBySubject(subjectId);
+      const visibleLevels = LevelVisibilityManager.getVisibleLevels(allLevels);
+      setLevels(visibleLevels);
       
       const userProgress = StorageManager.getProgress();
       setProgress(userProgress);
@@ -152,19 +156,20 @@ export default function SubjectPage() {
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => handleLevelClick(level.id, unlocked)}
               >
-                {/* Completion Badge */}
-                {completed && (
+                {/* Badge - Priority: Completed > Locked > Hidden > None */}
+                {completed ? (
                   <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full p-2 shadow-lg">
                     <Trophy size={16} />
                   </div>
-                )}
-
-                {/* Lock Icon */}
-                {!unlocked && (
+                ) : !unlocked ? (
                   <div className="absolute -top-2 -right-2 bg-gray-400 text-white rounded-full p-2 shadow-lg">
                     <Lock size={16} />
                   </div>
-                )}
+                ) : level.isHidden ? (
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full p-2 shadow-lg">
+                    <Eye size={16} />
+                  </div>
+                ) : null}
 
                 {/* Level Content */}
                 <div className="text-center mb-4">
@@ -174,7 +179,8 @@ export default function SubjectPage() {
                   <h3 className="text-xl font-bold text-gray-800 mb-2">
                     {level.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">
+                  <p className={`text-sm ${level.isHidden ? 'text-purple-600 font-medium' : 'text-gray-600'}`}>
+                    {level.isHidden && '✨ 特別チャレンジ ✨ '}
                     {level.description}
                   </p>
                 </div>

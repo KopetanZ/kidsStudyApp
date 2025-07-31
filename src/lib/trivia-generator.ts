@@ -225,6 +225,70 @@ export const triviaQuestions: TriviaData[] = [
     explanation: 'ちきゅうの ちゅうしんは 6000どで、たいようの ひょうめんより あついんだよ！',
     funFact: 'きんぞくも こおりも ぜんぶ とけちゃう あつさなんだ！',
     emoji: '🌍'
+  },
+
+  // 上級レベル用の謎解き問題（難易度4）
+  {
+    category: 'animals',
+    difficulty: 4,
+    question: '🦋 ちょうちょは どうやって あじを かんじる？',
+    options: ['はねで', 'あしで', 'しっぽで', 'はなで'],
+    correctAnswer: 'あしで',
+    explanation: 'ちょうちょは あしに あじを かんじる きかんが あって、はなに とまったときに あまいかどうか わかるんだよ！',
+    funFact: 'にんげんより 2000ばいも あまいものを かんじることが できるんだ！',
+    emoji: '🦋'
+  },
+  {
+    category: 'space',
+    difficulty: 4,
+    question: '🌟 よるそらで いちばん あかるい ほしは？',
+    options: ['ほくきょくしつ', 'シリウス', 'ベガ', 'スピカ'],
+    correctAnswer: 'シリウス',
+    explanation: 'シリウスは よるそらで いちばん あかるく みえる ほしなんだよ！',
+    funFact: 'たいようの 25ばいも あかるくて、8.6こうねん はなれた ところに あるんだ！',
+    emoji: '⭐'
+  },
+  {
+    category: 'science',
+    difficulty: 4,
+    question: '🧲 じしゃくが いつも きたを むくのは なぜ？',
+    options: ['ちきゅうが じしゃくだから', 'かぜが ふくから', 'たいようが あるから', 'つきが あるから'],
+    correctAnswer: 'ちきゅうが じしゃくだから',
+    explanation: 'ちきゅう ぜんたいが おおきな じしゃくに なっていて、じしゃくの はりが ちきゅうの きたを むくんだよ！',
+    funFact: 'ちきゅうの じしゃくの ちからは とても よわくて、れいぞうこの じしゃくの ほうが つよいんだ！',
+    emoji: '🧲'
+  },
+
+  // 超上級レベル用の問題（難易度5）
+  {
+    category: 'animals',
+    difficulty: 5,
+    question: '🐙 タコの しんぞうは いくつ？',
+    options: ['1つ', '2つ', '3つ', '4つ'],
+    correctAnswer: '3つ',
+    explanation: 'タコには しんぞうが 3つ あって、2つは えらに ちを おくり、1つは からだ ぜんたいに ちを おくるんだよ！',
+    funFact: 'だから タコは とても はやく およぐことが できるけど、つかれやすいんだ！',
+    emoji: '🐙'
+  },
+  {
+    category: 'space',
+    difficulty: 5,
+    question: '🌌 ぎんがけいには ほしが なんこ ある？',
+    options: ['100おく こ', '1000おく こ', '2000おく こ', '10000おく こ'],
+    correctAnswer: '2000おく こ',
+    explanation: 'わたしたちの ぎんがけいには やく 2000おくこの ほしが あるんだよ！',
+    funFact: 'そのなかで たいようみたいな ほしは 10パーセントぐらいしか ないんだ！',
+    emoji: '🌌'
+  },
+  {
+    category: 'science',
+    difficulty: 5,
+    question: '⚡ かみなりの でんきは どのくらい？',
+    options: ['かでんせいひん 1かげつぶん', 'かでんせいひん 1ねんぶん', 'かでんせいひん 10ねんぶん', 'かでんせいひん 100ねんぶん'],
+    correctAnswer: 'かでんせいひん 1かげつぶん',
+    explanation: 'かみなり いっぽんの でんきで いえの かでんせいひんを 1かげつ つかうことが できるんだよ！',
+    funFact: 'でも かみなりは 0.2びょうしか つづかないから、でんきを ためるのは とても むずかしいんだ！',
+    emoji: '⚡'
   }
 ];
 
@@ -259,6 +323,18 @@ export class TriviaQuestionGenerator {
     return this.convertToQuestions(this.shuffleArray(advancedQuestions).slice(0, 12));
   }
 
+  // 謎解きクイズ（難易度4）
+  static generateMysteryQuiz(): Question[] {
+    const mysteryQuestions = triviaQuestions.filter(q => q.difficulty === 4);
+    return this.convertToQuestions(this.shuffleArray(mysteryQuestions).slice(0, 10));
+  }
+
+  // 超上級クイズ（難易度5）
+  static generateSuperExpert(): Question[] {
+    const superExpertQuestions = triviaQuestions.filter(q => q.difficulty === 5);
+    return this.convertToQuestions(this.shuffleArray(superExpertQuestions).slice(0, 8));
+  }
+
   // レベルID別問題生成
   static generateQuestionsByLevelId(levelId: string): Question[] {
     switch (levelId) {
@@ -266,6 +342,10 @@ export class TriviaQuestionGenerator {
         return this.generateForBeginners();
       case 'trivia-advanced':
         return this.generateForAdvanced();
+      case 'trivia-mystery':
+        return this.generateMysteryQuiz();
+      case 'trivia-super-expert':
+        return this.generateSuperExpert();
       case 'trivia-animals':
         return this.generateByCategory('animals');
       case 'trivia-nature':

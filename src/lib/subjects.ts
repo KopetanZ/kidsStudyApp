@@ -168,6 +168,36 @@ export const mathLevels: Level[] = [
     isUnlocked: false
   },
   {
+    id: 'math-multiplication-intro',
+    subjectId: 'math',
+    name: 'かけ算のきほん',
+    description: 'かけ算のかんがえかたをまなぼう',
+    difficulty: 4,
+    requiredPoints: 400,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'math-multiplication-table',
+    subjectId: 'math',
+    name: 'かけ算九九',
+    description: '2のだんから9のだんまでおぼえよう',
+    difficulty: 4,
+    requiredPoints: 500,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'math-division-intro',
+    subjectId: 'math',
+    name: 'わり算のきほん',
+    description: 'わり算のかんがえかたをまなぼう',
+    difficulty: 5,
+    requiredPoints: 600,
+    isUnlocked: false,
+    isHidden: true
+  }
+  {
     id: 'math-addition-4',
     subjectId: 'math',
     name: '足し算 レベル4',
@@ -393,7 +423,28 @@ export const japaneseLevels: Level[] = [
     description: '学、校、年など学校の漢字',
     difficulty: 6,
     requiredPoints: 800,
-    isUnlocked: false
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'japanese-kanji-g2-2',
+    subjectId: 'japanese',
+    name: '漢字2年 どうぶつと自然',
+    description: '犬、虫、雲など生き物と自然の漢字',
+    difficulty: 6,
+    requiredPoints: 900,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'japanese-compound-words',
+    subjectId: 'japanese',
+    name: 'じゅくご（２文字）',
+    description: '青空、教室など２つの漢字の言葉',
+    difficulty: 7,
+    requiredPoints: 1000,
+    isUnlocked: false,
+    isHidden: true
   },
   {
     id: 'japanese-words-1',
@@ -532,6 +583,26 @@ export const moneyLevels: Level[] = [
     difficulty: 3,
     requiredPoints: 240,
     isUnlocked: false
+  },
+  {
+    id: 'money-level-4',
+    subjectId: 'money',
+    name: 'おさつとこまかいおかね',
+    description: '1000えんさつをつかった かいもの',
+    difficulty: 4,
+    requiredPoints: 350,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'money-level-5',
+    subjectId: 'money',
+    name: 'ちょきんとけいさん',
+    description: 'ちょきんばこの おかねを かぞえよう',
+    difficulty: 5,
+    requiredPoints: 450,
+    isUnlocked: false,
+    isHidden: true
   }
 ];
 
@@ -796,6 +867,26 @@ export const triviaLevels: Level[] = [
     difficulty: 3,
     requiredPoints: 300,
     isUnlocked: false
+  },
+  {
+    id: 'trivia-mystery',
+    subjectId: 'trivia',
+    name: 'なぞとき クイズ',
+    description: 'かんがえて とく なぞなぞ まめちしき',
+    difficulty: 4,
+    requiredPoints: 400,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'trivia-super-expert',
+    subjectId: 'trivia',
+    name: 'ちょう はかせ',
+    description: 'せかいの ふしぎな じじつ',
+    difficulty: 5,
+    requiredPoints: 500,
+    isUnlocked: false,
+    isHidden: true
   }
 ];
 

@@ -14,6 +14,7 @@ export interface Level {
   difficulty: number;
   requiredPoints: number;
   isUnlocked: boolean;
+  isHidden?: boolean; // 最初は表示されない上級レベル
 }
 
 export interface Question {
