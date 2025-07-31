@@ -438,39 +438,22 @@ export class MathQuestionGenerator {
     return this.shuffleArray(questions);
   }
 
+  // 掛け算レベル1: 基本の九九（2・3・5の段中心）
   static generateMultiplicationLevel1(): Question[] {
     const questions: Question[] = [];
-    const tables = [2, 3, 4, 5]; // Start with easier tables
+    const tables = [2, 3, 5]; // 覚えやすい段から開始
     
-    // Create reading patterns for kuku
-    const kukuReadings = {
-      1: ['いちいちがいち', 'いちにがに', 'いちさんがさん', 'いちしがし', 'いちごがご', 'いちろくがろく', 'いちしちがしち', 'いちはちがはち', 'いちくがく'],
-      2: ['にいちがに', 'ににんがし', 'にさんがろく', 'にしがはち', 'にごがじゅう', 'にろくがじゅうに', 'にしちがじゅうし', 'にはちがじゅうろく', 'にくがじゅうはち'],
-      3: ['さんいちがさん', 'さんにがろく', 'さざんがく', 'さんしがじゅうに', 'さんごがじゅうご', 'さぶろくがじゅうはち', 'さんしちがにじゅういち', 'さんぱがにじゅうし', 'さんくがにじゅうなな'],
-      4: ['しいちがし', 'しにがはち', 'しさんがじゅうに', 'ししがじゅうろく', 'しごがにじゅう', 'しろくがにじゅうし', 'ししちがにじゅうはち', 'しはちがさんじゅうに', 'しくがさんじゅうろく'],
-      5: ['ごいちがご', 'ごにがじゅう', 'ごさんがじゅうご', 'ごしがにじゅう', 'ごごがにじゅうご', 'ごろくがさんじゅう', 'ごしちがさんじゅうご', 'ごはちがよんじゅう', 'ごくがよんじゅうご']
-    };
+    // 九九の読み方パターン
+    const kukuReadings = this.getKukuReadings();
     
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 12; i++) {
       const table = tables[Math.floor(Math.random() * tables.length)];
-      const multiplier = Math.floor(Math.random() * 9) + 1; // 1-9
+      const multiplier = Math.floor(Math.random() * 5) + 1; // 1-5まで（簡単な範囲）
       const result = table * multiplier;
       
-      const placeholderPos = Math.random() < 0.3 ? 'left' : 'result';
-      
-      let questionText = '';
-      let correctAnswer = '';
-      
-      if (placeholderPos === 'left') {
-        questionText = `〇 × ${multiplier} = ${result}`;
-        correctAnswer = table.toString();
-      } else {
-        questionText = `${table} × ${multiplier} = 〇`;
-        correctAnswer = result.toString();
-      }
-
-      // Get the kuku reading
-      const reading = kukuReadings[table as keyof typeof kukuReadings]?.[multiplier - 1] || '';
+      const questionText = `${table} × ${multiplier} = 〇`;
+      const correctAnswer = result.toString();
+      const reading = kukuReadings[table]?.[multiplier - 1] || '';
 
       questions.push({
         id: `math-mul-1-${i}`,
@@ -484,9 +467,62 @@ export class MathQuestionGenerator {
             table,
             multiplier,
             reading,
-            pronunciation: reading
+            pronunciation: reading,
+            description: `${table}の段：${reading}`
           },
-          position: 'bottom'
+          position: 'top'
+        },
+        points: 20
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  // 掛け算レベル2: 九九完全習得（全ての段）
+  static generateMultiplicationLevel2(): Question[] {
+    const questions: Question[] = [];
+    const tables = [1, 2, 3, 4, 5, 6, 7, 8, 9]; // 全ての段
+    
+    const kukuReadings = this.getKukuReadings();
+    
+    for (let i = 0; i < 15; i++) {
+      const table = tables[Math.floor(Math.random() * tables.length)];
+      const multiplier = Math.floor(Math.random() * 9) + 1; // 1-9
+      const result = table * multiplier;
+      
+      // たまに逆問題も出題
+      const placeholderPos = Math.random() < 0.2 ? 'left' : 'result';
+      
+      let questionText = '';
+      let correctAnswer = '';
+      
+      if (placeholderPos === 'left') {
+        questionText = `〇 × ${multiplier} = ${result}`;
+        correctAnswer = table.toString();
+      } else {
+        questionText = `${table} × ${multiplier} = 〇`;
+        correctAnswer = result.toString();
+      }
+
+      const reading = kukuReadings[table]?.[multiplier - 1] || '';
+
+      questions.push({
+        id: `math-mul-2-${i}`,
+        type: 'math',
+        subtype: 'multiplication',
+        question: questionText,
+        correctAnswer,
+        visualAid: {
+          type: 'kuku-reading',
+          content: {
+            table,
+            multiplier,
+            reading,
+            pronunciation: reading,
+            description: `${table}の段：${reading}`
+          },
+          position: 'top'
         },
         points: 25
       });
@@ -495,12 +531,77 @@ export class MathQuestionGenerator {
     return this.shuffleArray(questions);
   }
 
-  static generateDivisionLevel1(): Question[] {
+  // 掛け算レベル3: 2桁×1桁の筆算
+  static generateMultiplicationLevel3(): Question[] {
+    const questions: Question[] = [];
+    
+    for (let i = 0; i < 12; i++) {
+      const num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+      const num2 = Math.floor(Math.random() * 9) + 1; // 1-9
+      const result = num1 * num2;
+      
+      questions.push({
+        id: `math-mul-3-${i}`,
+        type: 'math',
+        subtype: 'multiplication-written',
+        question: `${num1} × ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        visualAid: {
+          type: 'written-multiplication',
+          content: {
+            multiplicand: num1,
+            multiplier: num2,
+            steps: this.getMultiplicationSteps(num1, num2),
+            result
+          },
+          position: 'top'
+        },
+        points: 35
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  // 掛け算レベル4: 2桁×2桁の筆算
+  static generateMultiplicationLevel4(): Question[] {
     const questions: Question[] = [];
     
     for (let i = 0; i < 10; i++) {
-      const divisor = Math.floor(Math.random() * 5) + 2; // 2-6
-      const quotient = Math.floor(Math.random() * 8) + 1; // 1-8
+      const num1 = Math.floor(Math.random() * 90) + 10; // 10-99
+      const num2 = Math.floor(Math.random() * 90) + 10; // 10-99
+      const result = num1 * num2;
+      
+      questions.push({
+        id: `math-mul-4-${i}`,
+        type: 'math',
+        subtype: 'multiplication-written',
+        question: `${num1} × ${num2} = 〇`,
+        correctAnswer: result.toString(),
+        visualAid: {
+          type: 'written-multiplication-2digit',
+          content: {
+            multiplicand: num1,
+            multiplier: num2,
+            steps: this.getMultiplicationSteps2Digit(num1, num2),
+            result
+          },
+          position: 'top'
+        },
+        points: 50
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  // 割り算レベル1: 九九の範囲で割り切れる問題
+  static generateDivisionLevel1(): Question[] {
+    const questions: Question[] = [];
+    
+    for (let i = 0; i < 12; i++) {
+      const divisor = Math.floor(Math.random() * 7) + 2; // 2-8
+      const quotient = Math.floor(Math.random() * 9) + 1; // 1-9
       const dividend = divisor * quotient;
       
       questions.push({
@@ -509,11 +610,248 @@ export class MathQuestionGenerator {
         subtype: 'division',
         question: `${dividend} ÷ ${divisor} = 〇`,
         correctAnswer: quotient.toString(),
-        points: 30
+        visualAid: {
+          type: 'division-visual',
+          content: {
+            dividend,
+            divisor,
+            quotient,
+            description: `${dividend}を${divisor}つにわけると？`,
+            relatedKuku: `${divisor} × ${quotient} = ${dividend}`
+          },
+          position: 'top'
+        },
+        points: 25
       });
     }
 
     return this.shuffleArray(questions);
+  }
+
+  // 割り算レベル2: あまりのある割り算
+  static generateDivisionLevel2(): Question[] {
+    const questions: Question[] = [];
+    
+    for (let i = 0; i < 12; i++) {
+      const divisor = Math.floor(Math.random() * 7) + 2; // 2-8
+      const quotient = Math.floor(Math.random() * 9) + 1; // 1-9
+      const remainder = Math.floor(Math.random() * (divisor - 1)) + 1; // 1 to (divisor-1)
+      const dividend = divisor * quotient + remainder;
+      
+      questions.push({
+        id: `math-div-2-${i}`,
+        type: 'math',
+        subtype: 'division-remainder',
+        question: `${dividend} ÷ ${divisor} = 〇 あまり〇`,
+        correctAnswer: `${quotient} あまり${remainder}`,
+        visualAid: {
+          type: 'division-remainder-visual',
+          content: {
+            dividend,
+            divisor,
+            quotient,
+            remainder,
+            description: `${dividend}を${divisor}つにわけると${quotient}つずつ、あまり${remainder}`,
+            calculation: `${divisor} × ${quotient} + ${remainder} = ${dividend}`
+          },
+          position: 'top'
+        },
+        points: 35
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  // 割り算レベル3: 2桁÷1桁の筆算（割り切れる）
+  static generateDivisionLevel3(): Question[] {
+    const questions: Question[] = [];
+    
+    for (let i = 0; i < 10; i++) {
+      const divisor = Math.floor(Math.random() * 7) + 2; // 2-8
+      const quotient = Math.floor(Math.random() * 9) + 11; // 11-19 (2桁の商)
+      const dividend = divisor * quotient;
+      
+      questions.push({
+        id: `math-div-3-${i}`,
+        type: 'math',
+        subtype: 'division-written',
+        question: `${dividend} ÷ ${divisor} = 〇`,
+        correctAnswer: quotient.toString(),
+        visualAid: {
+          type: 'written-division',
+          content: {
+            dividend,
+            divisor,
+            quotient,
+            steps: this.getDivisionSteps(dividend, divisor),
+            description: '筆算で計算しよう'
+          },
+          position: 'top'
+        },
+        points: 45
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  // 割り算レベル4: 2桁÷1桁の筆算（あまりあり）
+  static generateDivisionLevel4(): Question[] {
+    const questions: Question[] = [];
+    
+    for (let i = 0; i < 10; i++) {
+      const divisor = Math.floor(Math.random() * 7) + 2; // 2-8
+      const quotient = Math.floor(Math.random() * 9) + 11; // 11-19
+      const remainder = Math.floor(Math.random() * (divisor - 1)) + 1;
+      const dividend = divisor * quotient + remainder;
+      
+      questions.push({
+        id: `math-div-4-${i}`,
+        type: 'math',
+        subtype: 'division-written-remainder',
+        question: `${dividend} ÷ ${divisor} = 〇 あまり〇`,
+        correctAnswer: `${quotient} あまり${remainder}`,
+        visualAid: {
+          type: 'written-division-remainder',
+          content: {
+            dividend,
+            divisor,
+            quotient,
+            remainder,
+            steps: this.getDivisionStepsWithRemainder(dividend, divisor),
+            description: '筆算で計算しよう（あまりあり）'
+          },
+          position: 'top'
+        },
+        points: 50
+      });
+    }
+
+    return this.shuffleArray(questions);
+  }
+
+  // ヘルパーメソッド: 九九の読み方データ
+  private static getKukuReadings(): Record<number, string[]> {
+    return {
+      1: ['いちいちがいち', 'いちにがに', 'いちさんがさん', 'いちしがし', 'いちごがご', 'いちろくがろく', 'いちしちがしち', 'いちはちがはち', 'いちくがく'],
+      2: ['にいちがに', 'ににんがし', 'にさんがろく', 'にしがはち', 'にごがじゅう', 'にろくがじゅうに', 'にしちがじゅうし', 'にはちがじゅうろく', 'にくがじゅうはち'],
+      3: ['さんいちがさん', 'さんにがろく', 'さざんがく', 'さんしがじゅうに', 'さんごがじゅうご', 'さぶろくがじゅうはち', 'さんしちがにじゅういち', 'さんぱがにじゅうし', 'さんくがにじゅうなな'],
+      4: ['しいちがし', 'しにがはち', 'しさんがじゅうに', 'ししがじゅうろく', 'しごがにじゅう', 'しろくがにじゅうし', 'ししちがにじゅうはち', 'しはちがさんじゅうに', 'しくがさんじゅうろく'],
+      5: ['ごいちがご', 'ごにがじゅう', 'ごさんがじゅうご', 'ごしがにじゅう', 'ごごがにじゅうご', 'ごろくがさんじゅう', 'ごしちがさんじゅうご', 'ごはちがよんじゅう', 'ごくがよんじゅうご'],
+      6: ['ろくいちがろく', 'ろくにがじゅうに', 'ろくさんがじゅうはち', 'ろくしがにじゅうし', 'ろくごがさんじゅう', 'ろくろくがさんじゅうろく', 'ろくしちがよんじゅうに', 'ろくはちがよんじゅうはち', 'ろっくがごじゅうし'],
+      7: ['しちいちがしち', 'しちにがじゅうし', 'しちさんがにじゅういち', 'しちしがにじゅうはち', 'しちごがさんじゅうご', 'しちろくがよんじゅうに', 'しちしちがよんじゅうく', 'しちはちがごじゅうろく', 'しちくがろくじゅうさん'],
+      8: ['はちいちがはち', 'はちにがじゅうろく', 'はちさんがにじゅうし', 'はちしがさんじゅうに', 'はちごがよんじゅう', 'はちろくがよんじゅうはち', 'はちしちがごじゅうろく', 'はちはちがろくじゅうし', 'はっくがしちじゅうに'],
+      9: ['くいちがく', 'くにがじゅうはち', 'くさんがにじゅうなな', 'くしがさんじゅうろく', 'くごがよんじゅうご', 'くろくがごじゅうし', 'くしちがろくじゅうさん', 'くはちがしちじゅうに', 'くくがはちじゅういち']
+    };
+  }
+
+  // ヘルパーメソッド: 掛け算の筆算ステップ（2桁×1桁）
+  private static getMultiplicationSteps(multiplicand: number, multiplier: number): Array<{step: string, description: string}> {
+    const steps = [];
+    const onesDigit = multiplicand % 10;
+    const tensDigit = Math.floor(multiplicand / 10);
+    
+    const onesResult = onesDigit * multiplier;
+    const tensResult = tensDigit * multiplier;
+    
+    steps.push({
+      step: `${onesDigit} × ${multiplier} = ${onesResult}`,
+      description: '一の位の計算'
+    });
+    
+    steps.push({
+      step: `${tensDigit} × ${multiplier} = ${tensResult}`,
+      description: '十の位の計算'
+    });
+    
+    steps.push({
+      step: `${onesResult} + ${tensResult * 10} = ${multiplicand * multiplier}`,
+      description: '答えを合計'
+    });
+    
+    return steps;
+  }
+
+  // ヘルパーメソッド: 掛け算の筆算ステップ（2桁×2桁）
+  private static getMultiplicationSteps2Digit(multiplicand: number, multiplier: number): Array<{step: string, description: string}> {
+    const steps = [];
+    const multOnes = multiplier % 10;
+    const multTens = Math.floor(multiplier / 10);
+    
+    const firstLine = multiplicand * multOnes;
+    const secondLine = multiplicand * multTens * 10;
+    
+    steps.push({
+      step: `${multiplicand} × ${multOnes} = ${firstLine}`,
+      description: '一の位との掛け算'
+    });
+    
+    steps.push({
+      step: `${multiplicand} × ${multTens}0 = ${secondLine}`,
+      description: '十の位との掛け算'
+    });
+    
+    steps.push({
+      step: `${firstLine} + ${secondLine} = ${multiplicand * multiplier}`,
+      description: '二つの答えを足す'
+    });
+    
+    return steps;
+  }
+
+  // ヘルパーメソッド: 割り算の筆算ステップ
+  private static getDivisionSteps(dividend: number, divisor: number): Array<{step: string, description: string}> {
+    const steps = [];
+    const quotient = Math.floor(dividend / divisor);
+    const tensQuotient = Math.floor(quotient / 10);
+    const onesQuotient = quotient % 10;
+    
+    if (tensQuotient > 0) {
+      const tensDigit = Math.floor(dividend / 10);
+      const tensRemainder = dividend - (tensQuotient * divisor * 10);
+      
+      steps.push({
+        step: `${Math.floor(dividend / 10)} ÷ ${divisor} = ${tensQuotient}`,
+        description: '十の位から割る'
+      });
+      
+      steps.push({
+        step: `${tensRemainder} ÷ ${divisor} = ${onesQuotient}`,
+        description: '残りを一の位で割る'
+      });
+    } else {
+      steps.push({
+        step: `${dividend} ÷ ${divisor} = ${quotient}`,
+        description: '一の位で割る'
+      });
+    }
+    
+    return steps;
+  }
+
+  // ヘルパーメソッド: あまりのある割り算の筆算ステップ
+  private static getDivisionStepsWithRemainder(dividend: number, divisor: number): Array<{step: string, description: string}> {
+    const steps = [];
+    const quotient = Math.floor(dividend / divisor);
+    const remainder = dividend % divisor;
+    
+    steps.push({
+      step: `${dividend} ÷ ${divisor} = ${quotient}`,
+      description: '割り切れる分を計算'
+    });
+    
+    steps.push({
+      step: `${quotient} × ${divisor} = ${quotient * divisor}`,
+      description: '確認の掛け算'
+    });
+    
+    steps.push({
+      step: `${dividend} - ${quotient * divisor} = ${remainder}`,
+      description: 'あまりを計算'
+    });
+    
+    return steps;
   }
 
   static generateQuestionsByLevelId(levelId: string): Question[] {
@@ -552,8 +890,20 @@ export class MathQuestionGenerator {
         return this.generateSubtractionLevel6();
       case 'math-multiplication-1':
         return this.generateMultiplicationLevel1();
+      case 'math-multiplication-2':
+        return this.generateMultiplicationLevel2();
+      case 'math-multiplication-3':
+        return this.generateMultiplicationLevel3();
+      case 'math-multiplication-4':
+        return this.generateMultiplicationLevel4();
       case 'math-division-1':
         return this.generateDivisionLevel1();
+      case 'math-division-2':
+        return this.generateDivisionLevel2();
+      case 'math-division-3':
+        return this.generateDivisionLevel3();
+      case 'math-division-4':
+        return this.generateDivisionLevel4();
       case 'time-reading-1':
       case 'time-reading-2':
       case 'time-reading-3':
@@ -808,17 +1158,175 @@ export const generateMathProblemVisual = (question: Question): string => {
     `;
   }
 
-  // Handle kuku reading visual
+  // Handle enhanced kuku reading visual
   if (question.visualAid.type === 'kuku-reading') {
-    const { table, multiplier, reading } = question.visualAid.content as { table: number; multiplier: number; reading: string };
+    const { table, multiplier, reading, description } = question.visualAid.content as { 
+      table: number; multiplier: number; reading: string; description?: string; 
+    };
     
     return `
-      <div class="bg-purple-50 rounded-2xl p-6 mb-4">
-        <div class="text-center text-lg font-bold text-purple-700 mb-4">🗣️ 九九の読み方</div>
-        <div class="text-center">
-          <div class="text-3xl font-bold text-purple-800 mb-2">${table} × ${multiplier}</div>
-          <div class="text-xl text-purple-600 mb-2">「${reading}」</div>
-          <div class="text-sm text-gray-600">${table}の段</div>
+      <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 mb-4 shadow-lg">
+        <div class="text-center mb-4">
+          <div class="text-6xl mb-2">🔢</div>
+          <div class="text-xl font-bold text-purple-600">${description || `${table}の段`}</div>
+        </div>
+        
+        <div class="bg-white rounded-xl p-4 shadow-inner mb-4">
+          <div class="text-center mb-4">
+            <div class="text-3xl font-bold text-gray-800">${table} × ${multiplier}</div>
+          </div>
+          
+          <div class="flex justify-center mb-4">
+            <div class="grid gap-2" style="grid-template-columns: repeat(${Math.min(multiplier, 5)}, 1fr);">
+              ${Array(Math.min(multiplier, 5)).fill(0).map(() => `
+                <div class="bg-blue-100 rounded-lg p-2">
+                  <div class="flex flex-wrap gap-1 justify-center">
+                    ${Array(Math.min(table, 9)).fill(0).map(() => '<div class="w-3 h-3 bg-blue-500 rounded-full"></div>').join('')}
+                  </div>
+                </div>
+              `).join('')}
+              ${multiplier > 5 ? `<div class="text-center text-gray-500">...</div>` : ''}
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-yellow-100 rounded-xl p-4 text-center">
+          <div class="text-lg font-bold text-yellow-800 mb-2">📢 読み方</div>
+          <div class="text-2xl font-bold text-yellow-900">${reading}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Handle division visual
+  if (question.visualAid.type === 'division-visual') {
+    const { dividend, divisor, quotient, description, relatedKuku } = question.visualAid.content as {
+      dividend: number; divisor: number; quotient: number; description: string; relatedKuku: string;
+    };
+
+    return `
+      <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-6 mb-4 shadow-lg">
+        <div class="text-center mb-4">
+          <div class="text-6xl mb-2">➗</div>
+          <div class="text-xl font-bold text-green-600">${description}</div>
+        </div>
+        
+        <div class="bg-white rounded-xl p-4 shadow-inner mb-4">
+          <div class="text-center mb-4">
+            <div class="text-3xl font-bold text-gray-800">${dividend} ÷ ${divisor}</div>
+          </div>
+          
+          <div class="flex justify-center mb-4">
+            <div class="grid gap-2" style="grid-template-columns: repeat(${Math.min(divisor, 6)}, 1fr);">
+              ${Array(Math.min(divisor, 6)).fill(0).map(() => `
+                <div class="bg-green-100 rounded-lg p-2 border-2 border-green-300">
+                  <div class="text-center text-sm font-bold text-green-700 mb-1">${quotient}個ずつ</div>
+                  <div class="flex flex-wrap gap-1 justify-center">
+                    ${Array(Math.min(quotient, 9)).fill(0).map(() => '<div class="w-3 h-3 bg-green-500 rounded-full"></div>').join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-blue-100 rounded-xl p-4 text-center">
+          <div class="text-lg font-bold text-blue-800 mb-2">🔄 関連する九九</div>
+          <div class="text-xl font-bold text-blue-900">${relatedKuku}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Handle division with remainder visual
+  if (question.visualAid.type === 'division-remainder-visual') {
+    const { dividend, divisor, quotient, remainder, description, calculation } = question.visualAid.content as {
+      dividend: number; divisor: number; quotient: number; remainder: number; description: string; calculation: string;
+    };
+
+    return `
+      <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6 mb-4 shadow-lg">
+        <div class="text-center mb-4">
+          <div class="text-6xl mb-2">➗</div>
+          <div class="text-xl font-bold text-orange-600">${description}</div>
+        </div>
+        
+        <div class="bg-white rounded-xl p-4 shadow-inner mb-4">
+          <div class="text-center mb-4">
+            <div class="text-3xl font-bold text-gray-800">${dividend} ÷ ${divisor}</div>
+          </div>
+          
+          <div class="flex justify-center items-center gap-4 mb-4">
+            <div class="grid gap-2" style="grid-template-columns: repeat(${Math.min(divisor, 5)}, 1fr);">
+              ${Array(Math.min(divisor, 5)).fill(0).map(() => `
+                <div class="bg-orange-100 rounded-lg p-2 border-2 border-orange-300">
+                  <div class="text-center text-sm font-bold text-orange-700 mb-1">${quotient}個ずつ</div>
+                  <div class="flex flex-wrap gap-1 justify-center">
+                    ${Array(Math.min(quotient, 6)).fill(0).map(() => '<div class="w-3 h-3 bg-orange-500 rounded-full"></div>').join('')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            
+            ${remainder > 0 ? `
+              <div class="bg-red-100 rounded-lg p-2 border-2 border-red-300">
+                <div class="text-center text-sm font-bold text-red-700 mb-1">あまり</div>
+                <div class="flex flex-wrap gap-1 justify-center">
+                  ${Array(Math.min(remainder, 9)).fill(0).map(() => '<div class="w-3 h-3 bg-red-500 rounded-full"></div>').join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        
+        <div class="bg-yellow-100 rounded-xl p-4 text-center">
+          <div class="text-lg font-bold text-yellow-800 mb-2">✓ 確認</div>
+          <div class="text-xl font-bold text-yellow-900">${calculation}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Handle written multiplication visual
+  if (question.visualAid.type === 'written-multiplication') {
+    const { multiplicand, multiplier, steps, result } = question.visualAid.content as {
+      multiplicand: number; multiplier: number; steps: Array<{step: string, description: string}>; result: number;
+    };
+
+    return `
+      <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 mb-4 shadow-lg">
+        <div class="text-center mb-4">
+          <div class="text-6xl mb-2">📝</div>
+          <div class="text-xl font-bold text-indigo-600">筆算で計算しよう</div>
+        </div>
+        
+        <div class="bg-white rounded-xl p-6 shadow-inner">
+          <div class="text-center mb-6">
+            <div class="text-3xl font-bold text-gray-800 mb-4">${multiplicand} × ${multiplier}</div>
+            
+            <div class="inline-block border-2 border-gray-300 rounded-lg p-4 bg-gray-50">
+              <div class="font-mono text-2xl text-right space-y-1">
+                <div class="border-b-2 border-gray-400 pb-1">
+                  <span class="text-gray-600">&nbsp;&nbsp;</span>${multiplicand}
+                </div>
+                <div class="border-b-2 border-gray-400 pb-1">
+                  ×&nbsp;&nbsp;${multiplier}
+                </div>
+                <div class="text-blue-600 font-bold">
+                  ${result.toString().padStart(4, ' ')}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="space-y-3">
+            ${steps.map((step, index) => `
+              <div class="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-400">
+                <div class="font-bold text-blue-800">${index + 1}. ${step.description}</div>
+                <div class="text-blue-600 font-mono text-lg">${step.step}</div>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
     `;

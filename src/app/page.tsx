@@ -13,6 +13,7 @@ import Link from 'next/link';
 import AchievementCenter from '@/components/AchievementCenter';
 import AccessibilitySettingsComponent from '@/components/AccessibilitySettings';
 import UserSettings from '@/components/UserSettings';
+import LearningAnalyticsDashboard from '@/components/LearningAnalyticsDashboard';
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -20,6 +21,7 @@ export default function Home() {
   const [showAchievementCenter, setShowAchievementCenter] = useState(false);
   const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
   const [showUserSettings, setShowUserSettings] = useState(false);
+  const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -54,6 +56,11 @@ export default function Home() {
   const handleUserSettingsOpen = () => {
     soundManager?.playSound('click');
     setShowUserSettings(true);
+  };
+
+  const handleAnalyticsDashboardOpen = () => {
+    soundManager?.playSound('click');
+    setShowAnalyticsDashboard(true);
   };
 
   const currentSeasonalEvent = AdvancedGamificationManager.getCurrentSeasonalEvent();
@@ -413,6 +420,17 @@ export default function Home() {
               <div className="text-sm opacity-90">音声・ミュート・表示設定</div>
             </div>
           </button>
+
+          <button
+            onClick={handleAnalyticsDashboardOpen}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">📈</span>
+            <div className="text-left">
+              <div className="text-lg">学習分析</div>
+              <div className="text-sm opacity-90">詳細な成績・傾向分析</div>
+            </div>
+          </button>
         </div>
 
         {/* Fun Footer */}
@@ -443,6 +461,11 @@ export default function Home() {
       {/* User Settings Modal */}
       {showUserSettings && (
         <UserSettings isOpen={showUserSettings} onClose={() => setShowUserSettings(false)} />
+      )}
+
+      {/* Learning Analytics Dashboard */}
+      {showAnalyticsDashboard && (
+        <LearningAnalyticsDashboard onClose={() => setShowAnalyticsDashboard(false)} />
       )}
     </div>
   );

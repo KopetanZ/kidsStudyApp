@@ -282,19 +282,79 @@ export const mathLevels: Level[] = [
     id: 'math-multiplication-1',
     subjectId: 'math',
     name: 'かけ算 レベル1',
-    description: '九九の読み方と計算',
-    difficulty: 4,
-    requiredPoints: 450,
+    description: '基本の九九（2・3・5の段）',
+    difficulty: 3,
+    requiredPoints: 350,
     isUnlocked: false
+  },
+  {
+    id: 'math-multiplication-2',
+    subjectId: 'math',
+    name: 'かけ算 レベル2',
+    description: '九九完全マスター（全ての段）',
+    difficulty: 4,
+    requiredPoints: 500,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'math-multiplication-3',
+    subjectId: 'math',
+    name: 'かけ算 レベル3',
+    description: '2桁×1桁の筆算',
+    difficulty: 5,
+    requiredPoints: 650,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'math-multiplication-4',
+    subjectId: 'math',
+    name: 'かけ算 レベル4',
+    description: '2桁×2桁の筆算',
+    difficulty: 6,
+    requiredPoints: 800,
+    isUnlocked: false,
+    isHidden: true
   },
   {
     id: 'math-division-1',
     subjectId: 'math',
     name: '割り算 レベル1',
-    description: '簡単な割り算',
-    difficulty: 5,
-    requiredPoints: 800,
+    description: '九九の範囲で割り切れる問題',
+    difficulty: 4,
+    requiredPoints: 550,
     isUnlocked: false
+  },
+  {
+    id: 'math-division-2',
+    subjectId: 'math',
+    name: '割り算 レベル2',
+    description: 'あまりのある割り算',
+    difficulty: 5,
+    requiredPoints: 700,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'math-division-3',
+    subjectId: 'math',
+    name: '割り算 レベル3',
+    description: '2桁÷1桁の筆算（割り切れる）',
+    difficulty: 6,
+    requiredPoints: 850,
+    isUnlocked: false,
+    isHidden: true
+  },
+  {
+    id: 'math-division-4',
+    subjectId: 'math',
+    name: '割り算 レベル4',
+    description: '2桁÷1桁の筆算（あまりあり）',
+    difficulty: 7,
+    requiredPoints: 1000,
+    isUnlocked: false,
+    isHidden: true
   }
 ];
 
