@@ -230,7 +230,7 @@ export const triviaQuestions: TriviaData[] = [
   // 上級レベル用の謎解き問題（難易度4）
   {
     category: 'animals',
-    difficulty: 4,
+    difficulty: 3,
     question: '🦋 ちょうちょは どうやって あじを かんじる？',
     options: ['はねで', 'あしで', 'しっぽで', 'はなで'],
     correctAnswer: 'あしで',
@@ -240,7 +240,7 @@ export const triviaQuestions: TriviaData[] = [
   },
   {
     category: 'space',
-    difficulty: 4,
+    difficulty: 3,
     question: '🌟 よるそらで いちばん あかるい ほしは？',
     options: ['ほくきょくしつ', 'シリウス', 'ベガ', 'スピカ'],
     correctAnswer: 'シリウス',
@@ -250,7 +250,7 @@ export const triviaQuestions: TriviaData[] = [
   },
   {
     category: 'science',
-    difficulty: 4,
+    difficulty: 3,
     question: '🧲 じしゃくが いつも きたを むくのは なぜ？',
     options: ['ちきゅうが じしゃくだから', 'かぜが ふくから', 'たいようが あるから', 'つきが あるから'],
     correctAnswer: 'ちきゅうが じしゃくだから',
@@ -262,7 +262,7 @@ export const triviaQuestions: TriviaData[] = [
   // 超上級レベル用の問題（難易度5）
   {
     category: 'animals',
-    difficulty: 5,
+    difficulty: 3,
     question: '🐙 タコの しんぞうは いくつ？',
     options: ['1つ', '2つ', '3つ', '4つ'],
     correctAnswer: '3つ',
@@ -272,7 +272,7 @@ export const triviaQuestions: TriviaData[] = [
   },
   {
     category: 'space',
-    difficulty: 5,
+    difficulty: 3,
     question: '🌌 ぎんがけいには ほしが なんこ ある？',
     options: ['100おく こ', '1000おく こ', '2000おく こ', '10000おく こ'],
     correctAnswer: '2000おく こ',
@@ -282,7 +282,7 @@ export const triviaQuestions: TriviaData[] = [
   },
   {
     category: 'science',
-    difficulty: 5,
+    difficulty: 3,
     question: '⚡ かみなりの でんきは どのくらい？',
     options: ['かでんせいひん 1かげつぶん', 'かでんせいひん 1ねんぶん', 'かでんせいひん 10ねんぶん', 'かでんせいひん 100ねんぶん'],
     correctAnswer: 'かでんせいひん 1かげつぶん',
@@ -325,13 +325,13 @@ export class TriviaQuestionGenerator {
 
   // 謎解きクイズ（難易度4）
   static generateMysteryQuiz(): Question[] {
-    const mysteryQuestions = triviaQuestions.filter(q => q.difficulty === 4);
+    const mysteryQuestions = triviaQuestions.filter(q => q.difficulty === 3);
     return this.convertToQuestions(this.shuffleArray(mysteryQuestions).slice(0, 10));
   }
 
   // 超上級クイズ（難易度5）
   static generateSuperExpert(): Question[] {
-    const superExpertQuestions = triviaQuestions.filter(q => q.difficulty === 5);
+    const superExpertQuestions = triviaQuestions.filter(q => q.difficulty === 3);
     return this.convertToQuestions(this.shuffleArray(superExpertQuestions).slice(0, 8));
   }
 

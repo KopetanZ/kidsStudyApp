@@ -14,6 +14,10 @@ import AchievementCenter from '@/components/AchievementCenter';
 import AccessibilitySettingsComponent from '@/components/AccessibilitySettings';
 import UserSettings from '@/components/UserSettings';
 import LearningAnalyticsDashboard from '@/components/LearningAnalyticsDashboard';
+import AdaptiveLearningDashboard from '@/components/AdaptiveLearningDashboard';
+import DetailedParentReport from '@/components/DetailedParentReport';
+import MultiplayerLobby from '@/components/MultiplayerLobby';
+import MultiplayerGame from '@/components/MultiplayerGame';
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -22,6 +26,11 @@ export default function Home() {
   const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
   const [showUserSettings, setShowUserSettings] = useState(false);
   const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
+  const [showAdaptiveLearningDashboard, setShowAdaptiveLearningDashboard] = useState(false);
+  const [showDetailedParentReport, setShowDetailedParentReport] = useState(false);
+  const [showMultiplayerLobby, setShowMultiplayerLobby] = useState(false);
+  const [multiplayerGameSession, setMultiplayerGameSession] = useState<string | null>(null);
+  const [userId] = useState(`user-${Date.now()}`);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -63,93 +72,37 @@ export default function Home() {
     setShowAnalyticsDashboard(true);
   };
 
+  const handleAdaptiveLearningDashboardOpen = () => {
+    soundManager?.playSound('click');
+    setShowAdaptiveLearningDashboard(true);
+  };
+
   const currentSeasonalEvent = AdvancedGamificationManager.getCurrentSeasonalEvent();
   const seasonalBonus = AdvancedGamificationManager.getSeasonalBonus();
 
   const handleProgressReport = async () => {
     soundManager?.playSound('click');
-    const report = ProgressReportManager.generateReport();
-    
-    // Show report in a modal first
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-      padding: 20px;
-      box-sizing: border-box;
-    `;
+    setShowDetailedParentReport(true);
+  };
 
-    modal.innerHTML = `
-      <div style="
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        max-width: 90vw;
-        max-height: 90vh;
-        overflow: auto;
-        position: relative;
-      ">
-        <button onclick="this.closest('.modal').remove()" style="
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          background: #ef4444;
-          color: white;
-          border: none;
-          border-radius: 50%;
-          width: 40px;
-          height: 40px;
-          font-size: 20px;
-          cursor: pointer;
-          z-index: 1;
-        ">×</button>
-        ${ProgressReportManager.generateReportHTML(report)}
-        <div style="text-align: center; margin-top: 20px;">
-          <button onclick="window.reportManager.downloadReport(window.currentReport)" style="
-            background: #22c55e;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-right: 10px;
-          ">📥 レポートをダウンロード</button>
-          <button onclick="this.closest('.modal').remove()" style="
-            background: #6b7280;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-          ">閉じる</button>
-        </div>
-      </div>
-    `;
+  const handleMultiplayerOpen = () => {
+    soundManager?.playSound('click');
+    setShowMultiplayerLobby(true);
+  };
 
-    modal.className = 'modal';
-    
-    // Store report for download
-    (window as any).currentReport = report;
-    (window as any).reportManager = ProgressReportManager;
+  const handleMultiplayerGameStart = (sessionId: string) => {
+    setShowMultiplayerLobby(false);
+    setMultiplayerGameSession(sessionId);
+  };
 
-    document.body.appendChild(modal);
+  const handleMultiplayerGameEnd = (results: any) => {
+    setMultiplayerGameSession(null);
+    // TODO: Show results or stats
+  };
 
-    // Close on background click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.remove();
-      }
-    });
+  const handleMultiplayerClose = () => {
+    setShowMultiplayerLobby(false);
+    setMultiplayerGameSession(null);
   };
 
   if (!progress) {
@@ -431,6 +384,28 @@ export default function Home() {
               <div className="text-sm opacity-90">詳細な成績・傾向分析</div>
             </div>
           </button>
+
+          <button
+            onClick={handleAdaptiveLearningDashboardOpen}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">🧠</span>
+            <div className="text-left">
+              <div className="text-lg">AI学習アシスタント</div>
+              <div className="text-sm opacity-90">個人専用学習プラン提案</div>
+            </div>
+          </button>
+
+          <button
+            onClick={handleMultiplayerOpen}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">👥</span>
+            <div className="text-left">
+              <div className="text-lg">マルチプレイヤー</div>
+              <div className="text-sm opacity-90">友達と一緒に学習バトル</div>
+            </div>
+          </button>
         </div>
 
         {/* Fun Footer */}
@@ -466,6 +441,34 @@ export default function Home() {
       {/* Learning Analytics Dashboard */}
       {showAnalyticsDashboard && (
         <LearningAnalyticsDashboard onClose={() => setShowAnalyticsDashboard(false)} />
+      )}
+
+      {/* AI Adaptive Learning Dashboard */}
+      {showAdaptiveLearningDashboard && (
+        <AdaptiveLearningDashboard onClose={() => setShowAdaptiveLearningDashboard(false)} />
+      )}
+
+      {/* Detailed Parent Report */}
+      {showDetailedParentReport && (
+        <DetailedParentReport onClose={() => setShowDetailedParentReport(false)} />
+      )}
+
+      {/* Multiplayer Lobby */}
+      {showMultiplayerLobby && (
+        <MultiplayerLobby 
+          onClose={handleMultiplayerClose}
+          onGameStart={handleMultiplayerGameStart}
+        />
+      )}
+
+      {/* Multiplayer Game */}
+      {multiplayerGameSession && (
+        <MultiplayerGame
+          sessionId={multiplayerGameSession}
+          userId={userId}
+          onGameEnd={handleMultiplayerGameEnd}
+          onClose={handleMultiplayerClose}
+        />
       )}
     </div>
   );

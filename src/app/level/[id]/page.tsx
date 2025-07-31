@@ -20,6 +20,7 @@ import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
 import { CertificateManager } from '@/lib/certificate';
 import { getAllLevels } from '@/lib/subjects';
+import { AdaptiveLearningEngine, LearningSession } from '@/lib/adaptive-learning-engine';
 import { Question, GameSession, UserProgress } from '@/types';
 import { ArrowLeft, CheckCircle, XCircle, Star, Award, Zap } from 'lucide-react';
 import DrawingCanvas from '@/components/DrawingCanvas';
@@ -43,6 +44,10 @@ export default function LevelPage() {
   const [xpGained, setXPGained] = useState(0);
   const [_levelUpOccurred, setLevelUpOccurred] = useState(false);
   const [_newBadges, setNewBadges] = useState<string[]>([]);
+  const [adaptiveEngine] = useState(AdaptiveLearningEngine.getInstance());
+  const [currentLearningSession, setCurrentLearningSession] = useState<LearningSession | null>(null);
+  const [adaptiveMessage, setAdaptiveMessage] = useState<string>('');
+  const [suggestBreak, setSuggestBreak] = useState(false);
 
   useEffect(() => {
     const initializeLevel = async () => {
@@ -100,6 +105,18 @@ export default function LevelPage() {
       const sound = SoundManager.getInstance();
       await sound.init();
       setSoundManager(sound);
+
+      // 適応学習セッションを開始
+      const userId = 'user-' + (localStorage.getItem('user-id') || Date.now().toString());
+      const learningSession: LearningSession = {
+        sessionId: `${userId}-${Date.now()}`,
+        startTime: new Date(),
+        questions: questions,
+        responses: [],
+        focusLevel: 8, // 初期値
+        engagementScore: 8 // 初期値
+      };
+      setCurrentLearningSession(learningSession);
     };
 
     initializeLevel();
@@ -118,6 +135,44 @@ export default function LevelPage() {
     setIsCorrect(correct);
     setShowResult(true);
     setShowDrawingCanvas(false);
+
+    // 適応学習のためのレスポンス記録
+    const responseTime = Date.now() - (currentLearningSession?.startTime.getTime() || Date.now());
+    const timeSpentSeconds = Math.floor(responseTime / 1000);
+    
+    if (currentLearningSession) {
+      const response = {
+        questionId: currentQuestion.id,
+        userAnswer: finalAnswer,
+        isCorrect: correct,
+        timeSpent: timeSpentSeconds,
+        attempts: 1, // TODO: 実際の試行回数を記録
+        helpUsed: false // TODO: ヘルプ使用状況を記録
+      };
+      
+      currentLearningSession.responses.push(response);
+      setCurrentLearningSession(currentLearningSession);
+
+      // 適応学習エンジンによるリアルタイム調整
+      try {
+        const userId = currentLearningSession.sessionId.split('-')[0] + '-' + currentLearningSession.sessionId.split('-')[1];
+        const adjustment = await adaptiveEngine.adjustRealTime(userId, {
+          isCorrect: correct,
+          timeSpent: timeSpentSeconds,
+          attempts: 1
+        });
+
+        setAdaptiveMessage(adjustment.encouragementMessage);
+        setSuggestBreak(adjustment.suggestBreak);
+
+        // 難易度調整があれば次の問題に反映（実際の実装では問題生成時に使用）
+        if (adjustment.nextDifficultyAdjustment !== 0) {
+          console.log('Difficulty adjustment:', adjustment.nextDifficultyAdjustment);
+        }
+      } catch (error) {
+        console.error('Adaptive learning adjustment failed:', error);
+      }
+    }
 
     // Play sound
     if (correct) {
@@ -736,6 +791,24 @@ export default function LevelPage() {
                   <p className="text-green-600">
                     <span className="font-bold">+{currentQuestion.points}</span> ポイント！
                   </p>
+                )}
+
+                {/* 適応学習メッセージ */}
+                {adaptiveMessage && (
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="text-blue-800 font-medium text-sm">
+                      🤖 AI先生: {adaptiveMessage}
+                    </div>
+                  </div>
+                )}
+
+                {/* 休憩提案 */}
+                {suggestBreak && (
+                  <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                    <div className="text-orange-800 font-medium text-sm">
+                      ☕ 少し休憩を取りませんか？集中力を回復させましょう！
+                    </div>
+                  </div>
                 )}
               </div>
             )}

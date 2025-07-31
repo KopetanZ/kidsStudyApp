@@ -196,7 +196,7 @@ export const mathLevels: Level[] = [
     requiredPoints: 600,
     isUnlocked: false,
     isHidden: true
-  }
+  },
   {
     id: 'math-addition-4',
     subjectId: 'math',

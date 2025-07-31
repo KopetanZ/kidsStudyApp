@@ -30,11 +30,11 @@ export class OCREngine {
       this.worker = await createWorker();
       
       // 日本語とアルファベットの混在に対応
-      await this.worker.loadLanguage('jpn+eng');
-      await this.worker.initialize('jpn+eng');
+      await (this.worker as any).loadLanguage('jpn+eng');
+      await (this.worker as any).initialize('jpn+eng');
       
       // OCRの精度向上のための設定
-      await this.worker.setParameters({
+      await (this.worker as any).setParameters({
         // 文字認識の精度を向上させる設定
         tessedit_char_whitelist: 'あいうえおかきくけこさしすせそたちつてのはひふへほまみすめもやゆよらりるれろわをんアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっゃゅょゎっガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポッャュョヮッ123456789０１２３４５６７８９',
         // ページレイアウト分析を無効化（単一文字用）
@@ -65,7 +65,7 @@ export class OCREngine {
       const processedImage = await this.preprocessImage(imageData);
       
       // OCR実行
-      const { data } = await this.worker.recognize(processedImage);
+      const { data } = await (this.worker as any).recognize(processedImage);
       
       // 結果の後処理
       const result = await this.postprocessResult(data);
@@ -245,13 +245,13 @@ export class OCREngine {
 
     try {
       // 日本語文字認識に特化した設定
-      await this.worker.setParameters({
+      await (this.worker as any).setParameters({
         tessedit_char_whitelist: 'あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽっゃゅょゎアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポッャュョヮ',
         tessedit_pageseg_mode: '10', // 単一文字モード（より厳密）
       });
 
       const processedImage = await this.preprocessImage(imageData);
-      const { data } = await this.worker.recognize(processedImage);
+      const { data } = await (this.worker as any).recognize(processedImage);
       
       return await this.postprocessResult(data);
     } catch (error) {
@@ -276,13 +276,13 @@ export class OCREngine {
 
     try {
       // 数字認識に特化した設定
-      await this.worker.setParameters({
+      await (this.worker as any).setParameters({
         tessedit_char_whitelist: '0123456789０１２３４５６７８９',
         tessedit_pageseg_mode: '8',
       });
 
       const processedImage = await this.preprocessImage(imageData);
-      const { data } = await this.worker.recognize(processedImage);
+      const { data } = await (this.worker as any).recognize(processedImage);
       
       const result = await this.postprocessResult(data);
       
@@ -304,7 +304,7 @@ export class OCREngine {
 
   async terminate(): Promise<void> {
     if (this.worker) {
-      await this.worker.terminate();
+      await (this.worker as any).terminate();
       this.worker = null;
       this.isInitialized = false;
     }
