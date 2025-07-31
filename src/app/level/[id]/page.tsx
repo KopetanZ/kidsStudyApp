@@ -242,10 +242,14 @@ export default function LevelPage() {
     }, 2500);
   };
 
-  const handleDrawingComplete = (_drawing: string) => {
-    // Simple character recognition placeholder
-    // In a real app, you'd use tesseract.js here
-    handleAnswerSubmit(currentQuestion?.correctAnswer || '');
+  const handleDrawingComplete = (recognizedText: string) => {
+    // OCRで認識された文字または空文字列を受け取る
+    if (recognizedText) {
+      handleAnswerSubmit(recognizedText);
+    } else {
+      // 認識できなかった場合は通常の入力モードに戻る
+      setShowDrawingCanvas(false);
+    }
   };
 
   const handleDrawingClear = () => {
@@ -673,6 +677,12 @@ export default function LevelPage() {
                     onDrawingComplete={handleDrawingComplete}
                     onClear={handleDrawingClear}
                     expectedCharacter={currentQuestion.correctAnswer}
+                    recognitionType={
+                      currentQuestion.type === 'math' ? 'number' : 
+                      currentQuestion.subtype?.includes('hiragana') ? 'hiragana' :
+                      currentQuestion.subtype?.includes('katakana') ? 'katakana' :
+                      'any'
+                    }
                   />
                 </div>
               )}
