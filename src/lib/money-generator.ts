@@ -30,12 +30,39 @@ export class MoneyQuestionGenerator {
     const basicCoins = japaneseCoins.filter(coin => coin.value <= 100);
     
     basicCoins.forEach((coin, index) => {
-      // 硬貨認識問題
+      // 4択選択肢を生成
+      const generateOptions = (correctValue: number): string[] => {
+        const options = [`${correctValue}えん`];
+        const otherValues = basicCoins
+          .map(c => c.value)
+          .filter(v => v !== correctValue);
+        
+        // ランダムに3つの間違った選択肢を追加
+        while (options.length < 4 && otherValues.length > 0) {
+          const randomIndex = Math.floor(Math.random() * otherValues.length);
+          const wrongValue = otherValues[randomIndex];
+          options.push(`${wrongValue}えん`);
+          otherValues.splice(randomIndex, 1);
+        }
+        
+        // 足りない場合は適当な値を追加
+        while (options.length < 4) {
+          const randomValue = [2, 3, 20, 30, 200, 300][Math.floor(Math.random() * 6)];
+          if (!options.includes(`${randomValue}えん`)) {
+            options.push(`${randomValue}えん`);
+          }
+        }
+        
+        return this.shuffleArray(options);
+      };
+
+      // 硬貨認識問題（4択）
       questions.push({
         id: `money-coin-${coin.value}`,
         type: 'math',
         subtype: 'money-recognition',
         question: `このこうかは いくら？`,
+        options: generateOptions(coin.value),
         correctAnswer: `${coin.value}えん`,
         visualAid: {
           type: 'money-coin-display',
@@ -48,21 +75,46 @@ export class MoneyQuestionGenerator {
         points: 10
       });
 
-      // 硬貨の数え方問題
+      // 硬貨の数え方問題（4択）
       if (coin.value <= 10) {
         for (let count = 2; count <= 5; count++) {
+          const correctTotal = coin.value * count;
+          const generateCountOptions = (correctValue: number): string[] => {
+            const options = [`${correctValue}えん`];
+            
+            // 間違った選択肢を生成（±1枚、±2枚、間違った硬貨での計算など）
+            const wrongOptions = [
+              `${correctValue + coin.value}えん`, // +1枚
+              `${correctValue - coin.value}えん`, // -1枚
+              `${correctValue * 2}えん`, // 2倍
+              `${Math.max(1, correctValue - coin.value * 2)}えん`, // -2枚
+              `${correctValue + 5}えん`, // +5円
+              `${Math.max(1, correctValue - 5)}えん` // -5円
+            ];
+            
+            // 負の値や重複を除いて3つ選択
+            const validWrongOptions = wrongOptions
+              .filter(opt => !opt.includes('-') && opt !== `${correctValue}えん`)
+              .slice(0, 3);
+            
+            options.push(...validWrongOptions);
+            
+            return this.shuffleArray(options.slice(0, 4));
+          };
+
           questions.push({
             id: `money-count-${coin.value}-${count}`,
             type: 'math',
             subtype: 'money-counting',
             question: `${coin.name}が ${count}まい あります。ぜんぶで いくら？`,
-            correctAnswer: `${coin.value * count}えん`,
+            options: generateCountOptions(correctTotal),
+            correctAnswer: `${correctTotal}えん`,
             visualAid: {
               type: 'money-coin-counting',
               content: {
                 coin: coin,
                 count: count,
-                total: coin.value * count
+                total: correctTotal
               },
               position: 'top'
             },
@@ -90,11 +142,36 @@ export class MoneyQuestionGenerator {
     ];
 
     combinations.forEach((combo, index) => {
+      // 組み合わせ問題用の4択選択肢生成
+      const generateComboOptions = (correctValue: number): string[] => {
+        const options = [`${correctValue}えん`];
+        
+        // 間違った選択肢を生成
+        const wrongOptions = [
+          `${correctValue + 10}えん`,
+          `${correctValue - 10}えん`,
+          `${correctValue + 20}えん`,
+          `${Math.max(10, correctValue - 20)}えん`,
+          `${correctValue + 50}えん`,
+          `${Math.max(10, correctValue - 50)}えん`
+        ];
+        
+        // 負の値や重複を除いて3つ選択
+        const validWrongOptions = wrongOptions
+          .filter(opt => !opt.includes('-') && opt !== `${correctValue}えん`)
+          .slice(0, 3);
+        
+        options.push(...validWrongOptions);
+        
+        return this.shuffleArray(options.slice(0, 4));
+      };
+
       questions.push({
         id: `money-combo-${index}`,
         type: 'math',
         subtype: 'money-combination',
         question: `このこうかを ぜんぶ たすと いくら？`,
+        options: generateComboOptions(combo.total),
         correctAnswer: `${combo.total}えん`,
         visualAid: {
           type: 'money-combination-display',
@@ -127,12 +204,36 @@ export class MoneyQuestionGenerator {
     ];
 
     shoppingItems.forEach((item, index) => {
-      // 簡単な買い物問題
+      // 買い物問題用の4択選択肢生成
+      const generateShoppingOptions = (correctPrice: number): string[] => {
+        const options = [`${correctPrice}えん`];
+        
+        // 間違った選択肢（近い価格）
+        const wrongOptions = [
+          `${correctPrice + 10}えん`,
+          `${Math.max(5, correctPrice - 10)}えん`,
+          `${correctPrice + 20}えん`,
+          `${Math.max(5, correctPrice - 20)}えん`,
+          `${correctPrice * 2}えん`,
+          `${Math.ceil(correctPrice / 2)}えん`
+        ];
+        
+        const validWrongOptions = wrongOptions
+          .filter(opt => !opt.includes('-') && opt !== `${correctPrice}えん`)
+          .slice(0, 3);
+        
+        options.push(...validWrongOptions);
+        
+        return this.shuffleArray(options.slice(0, 4));
+      };
+
+      // 簡単な買い物問題（4択）
       questions.push({
         id: `money-shopping-${index}`,
         type: 'math',
         subtype: 'money-shopping',
-        question: `${item.item}を かいます。${item.price}えん です。`,
+        question: `${item.item}を かいます。いくら でしょう？`,
+        options: generateShoppingOptions(item.price),
         correctAnswer: `${item.price}えん`,
         visualAid: {
           type: 'money-shopping-display',
@@ -147,15 +248,39 @@ export class MoneyQuestionGenerator {
         points: 15
       });
 
-      // お釣り計算（簡単なパターン）
+      // お釣り計算（簡単なパターン・4択）
       if (item.price <= 80) {
         const payment = 100;
         const change = payment - item.price;
+        
+        const generateChangeOptions = (correctChange: number): string[] => {
+          const options = [`${correctChange}えん`];
+          
+          // お釣り計算の間違いパターン
+          const wrongOptions = [
+            `${correctChange + 10}えん`,
+            `${Math.max(0, correctChange - 10)}えん`,
+            `${payment}えん`, // 支払い金額と間違える
+            `${item.price}えん`, // 商品価格と間違える
+            `${correctChange + 5}えん`,
+            `${Math.max(0, correctChange - 5)}えん`
+          ];
+          
+          const validWrongOptions = wrongOptions
+            .filter(opt => opt !== `${correctChange}えん`)
+            .slice(0, 3);
+          
+          options.push(...validWrongOptions);
+          
+          return this.shuffleArray(options.slice(0, 4));
+        };
+
         questions.push({
           id: `money-change-${index}`,
           type: 'math',
           subtype: 'money-change',
           question: `${item.item}を ${item.price}えんで かいました。100えん はらったら おつりは いくら？`,
+          options: generateChangeOptions(change),
           correctAnswer: `${change}えん`,
           visualAid: {
             type: 'money-change-display',
@@ -212,6 +337,10 @@ export const generateMoneyVisual = (question: Question): string => {
       showValue: boolean;
     };
 
+    // 実際の硬貨画像があるかチェック
+    const coinImagePath = `/images/coins/${coin.value}yen.png`;
+    const useImage = false; // 画像が配置されたらtrueに変更
+
     return `
       <div class="bg-green-50 rounded-2xl p-6 mb-4">
         <div class="text-center text-lg font-bold text-gray-700 mb-4">このこうかは いくら？</div>
@@ -219,7 +348,10 @@ export const generateMoneyVisual = (question: Question): string => {
         <div class="flex justify-center mb-6">
           <div class="bg-white rounded-full p-8 shadow-lg border-4 border-green-200 w-32 h-32 flex items-center justify-center">
             <div class="text-center">
-              <div class="text-6xl mb-2">${coin.emoji}</div>
+              ${useImage ? 
+                `<img src="${coinImagePath}" alt="${coin.name}" class="w-20 h-20 object-contain" />` :
+                `<div class="text-6xl mb-2">${coin.emoji}</div>`
+              }
               ${showValue ? `<div class="text-lg font-bold" style="color: ${coin.color}">${coin.name}</div>` : ''}
             </div>
           </div>
@@ -245,11 +377,19 @@ export const generateMoneyVisual = (question: Question): string => {
         <div class="text-center text-lg font-bold text-gray-700 mb-4">${coin.name}を かぞえよう！</div>
         
         <div class="flex justify-center mb-6">
-          ${Array.from({ length: count }, (_, i) => `
-            <div class="bg-white rounded-full p-4 shadow-lg border-2 border-blue-200 w-20 h-20 flex items-center justify-center mx-1">
-              <div class="text-3xl">${coin.emoji}</div>
-            </div>
-          `).join('')}
+          ${Array.from({ length: count }, (_, i) => {
+            const coinImagePath = `/images/coins/${coin.value}yen.png`;
+            const useImage = false; // 画像が配置されたらtrueに変更
+            
+            return `
+              <div class="bg-white rounded-full p-4 shadow-lg border-2 border-blue-200 w-20 h-20 flex items-center justify-center mx-1">
+                ${useImage ? 
+                  `<img src="${coinImagePath}" alt="${coin.name}" class="w-12 h-12 object-contain" />` :
+                  `<div class="text-3xl">${coin.emoji}</div>`
+                }
+              </div>
+            `;
+          }).join('')}
         </div>
         
         <div class="text-center mb-4">
@@ -283,11 +423,19 @@ export const generateMoneyVisual = (question: Question): string => {
             return `
               <div class="text-center">
                 <div class="flex justify-center mb-2">
-                  ${Array.from({ length: group.count }, () => `
-                    <div class="bg-white rounded-full p-2 shadow-lg border-2 border-yellow-200 w-16 h-16 flex items-center justify-center mx-1">
-                      <div class="text-2xl">${coinData?.emoji || '🪙'}</div>
-                    </div>
-                  `).join('')}
+                  ${Array.from({ length: group.count }, () => {
+                    const coinImagePath = `/images/coins/${group.value}yen.png`;
+                    const useImage = false; // 画像が配置されたらtrueに変更
+                    
+                    return `
+                      <div class="bg-white rounded-full p-2 shadow-lg border-2 border-yellow-200 w-16 h-16 flex items-center justify-center mx-1">
+                        ${useImage ? 
+                          `<img src="${coinImagePath}" alt="${group.value}えん" class="w-10 h-10 object-contain" />` :
+                          `<div class="text-2xl">${coinData?.emoji || '🪙'}</div>`
+                        }
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
                 <div class="text-sm font-bold text-gray-600">${group.value}えん × ${group.count}</div>
               </div>
