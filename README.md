@@ -1,21 +1,28 @@
-# 🎓 Kids Study App - 小学生向け学習アプリ
+# 🎓 Kids Study App - 小学生向け包括学習プラットフォーム
 
-文部科学省学習指導要領に基づいた、小学校低学年向けの包括的学習システムです。ひらがなから漢字まで、基礎から応用まで体系的に学べます。
+文部科学省学習指導要領に基づいた、小学生向けの総合学習システムです。基礎学力から現代に必要なデジタルリテラシーまで、12の学習分野を通じて子どもたちの成長を支援します。
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
-![Status](https://img.shields.io/badge/status-Active%20Development-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen.svg)
 
 ## 🌟 主要機能
 
-### 📚 学習科目
+### 📚 学習科目（12分野）
 - **🔢 算数**: 数の理解(1-100) → 繰り上がり・繰り下がり → 四則演算
 - **🇯🇵 国語**: ひらがな → カタカナ → 1-2年生漢字 → 単語・熟語
 - **🇺🇸 英語**: アルファベット → 基本単語 → フォニックス
 - **🕐 時計**: ○時 → ○時30分 → 15分・45分読み
 - **🔺 図形**: 基本図形 → 図形比較 → パターン認識
+- **💰 おかね**: 硬貨認識 → 組み合わせ → 買い物・おつり計算
+- **📚 ぶんしょう**: 短文理解 → 物語読解 → 会話・複雑な文章
+- **⏰ じかんけいさん**: 時間の長さ → 時刻計算 → スケジュール管理
+- **🔬 りか**: 生き物観察 → 季節・天気 → 身体・自然現象
+- **💭 ごい**: 反対語 → 仲間分け → 感情表現
+- **💻 プログラミング**: 順序・手順 → 繰り返し・条件 → 問題解決・デバッグ
+- **📱 デジタル**: インターネット安全 → YouTube安全 → SNS意識
 
 ### 🎯 教育的特徴
 - **段階的学習設計**: 基礎から応用まで体系的に構成
@@ -42,13 +49,19 @@
 - **TypeScript**: 型安全な開発
 - **Tailwind CSS**: レスポンシブUI
 
-### 学習エンジン
+### 学習エンジン（12系統）
 - **MathQuestionGenerator**: 算数問題生成（さくらんぼ計算等）
 - **JapaneseQuestionGenerator**: 国語問題生成（ひらがな〜漢字）
-- **KanjiQuestionGenerator**: 漢字学習システム
-- **NumbersQuestionGenerator**: 数概念強化システム
+- **EnglishQuestionGenerator**: 英語学習システム
 - **TimeQuestionGenerator**: 時計読み問題
 - **ShapeQuestionGenerator**: 図形認識問題
+- **MoneyQuestionGenerator**: お金計算システム
+- **ReadingQuestionGenerator**: 読解問題生成
+- **TimeCalculationQuestionGenerator**: 時間計算システム
+- **ScienceQuestionGenerator**: 理科観察問題
+- **VocabularyQuestionGenerator**: 語彙力強化システム
+- **ProgrammingQuestionGenerator**: プログラミング思考育成
+- **DigitalLiteracyQuestionGenerator**: デジタルリテラシー教材
 
 ### データ管理
 - **LocalStorage**: 学習進捗の永続化
@@ -66,17 +79,23 @@ src/
 │   ├── page.tsx           # ホームページ
 │   ├── level/[id]/        # 学習レベルページ
 │   └── subject/[id]/      # 科目選択ページ
-├── lib/                   # コアライブラリ
-│   ├── math-generator.ts     # 算数問題生成
-│   ├── japanese-generator.ts # 国語問題生成  
-│   ├── kanji-generator.ts    # 漢字学習システム
-│   ├── numbers-generator.ts  # 数概念システム
-│   ├── time-generator.ts     # 時計問題生成
-│   ├── shape-generator.ts    # 図形問題生成
-│   ├── subjects.ts           # 科目・レベル定義
-│   ├── storage.ts            # データ永続化
-│   ├── progress-tracker.ts   # 学習分析
-│   └── speech-synthesis.ts   # 音声読み上げ
+├── lib/                          # コアライブラリ
+│   ├── math-generator.ts            # 算数問題生成
+│   ├── japanese-generator.ts        # 国語問題生成  
+│   ├── english-generator.ts         # 英語学習システム
+│   ├── time-generator.ts            # 時計問題生成
+│   ├── shape-generator.ts           # 図形問題生成
+│   ├── money-generator.ts           # お金計算システム
+│   ├── reading-generator.ts         # 読解問題生成
+│   ├── time-calculation-generator.ts # 時間計算システム
+│   ├── science-generator.ts         # 理科観察問題
+│   ├── vocabulary-generator.ts      # 語彙力強化システム
+│   ├── programming-generator.ts     # プログラミング思考育成
+│   ├── digital-literacy-generator.ts # デジタルリテラシー教材
+│   ├── subjects.ts                  # 科目・レベル定義
+│   ├── storage.ts                   # データ永続化
+│   ├── sound.ts                     # 音声システム
+│   └── visual-effects.ts            # 視覚効果
 ├── types/                 # TypeScript型定義
 │   └── index.ts
 └── components/           # UIコンポーネント（将来）
@@ -148,9 +167,12 @@ npm run start
 ## 🔧 開発情報
 
 ### 最新の主要アップデート
+- **v4.0**: 12学習分野完全実装・デジタルリテラシー追加・プログラミング思考育成
+- **v3.5**: 理科観察システム・語彙力強化・時間計算システム実装
+- **v3.2**: お金計算・読解システム実装・テキスト年齢適正化
 - **v3.0**: 漢字学習システム・音声読み上げ・進捗可視化実装
-- **v2.1**: 時計UI改善・図形問題修正
-- **v2.0**: カリキュラム研究基づく体系的学習システム
+- **v2.1**: 時計UI改善・図形問題修正・バグ修正対応
+- **v2.0**: カリキュラム研究基づく体系的学習システム構築
 - **v1.5**: さくらんぼ計算・繰り下がり視覚化実装
 - **v1.0**: 基本的な学習システム構築
 
@@ -159,11 +181,30 @@ npm run start
 - LocalStorageによるデータ管理（デバイス間同期なし）
 - オフライン対応未実装
 
+### 技術アーキテクチャの考察
+本プロジェクトは約15,000行のコードを持つ大規模な学習システムに成長しました。技術選択について：
+
+**Static Generation vs Database**
+- 現在の静的生成アプローチは本プロジェクトに最適です
+- 教育コンテンツは比較的安定しており、頻繁な更新が不要
+- レスポンス速度とキャッシング効率が優秀
+- インフラコストが低く、スケールしやすい
+
+**LocalStorage vs Cloud Storage**
+- 小学生の学習データはプライバシー重視でローカル保存が適切
+- 保護者の同意なしにクラウドにデータを送信しない方針
+- オフライン学習が可能な設計
+
+**Component Architecture**
+- 12の学習システムが独立したジェネレーターとして実装
+- 各システムは専用の視覚化関数を持ち、拡張性を確保
+- TypeScript による型安全性でバグを未然に防止
+
 ### 今後の開発予定（ROADMAP参照）
-- フリガナ自動付与システム
-- 3-6年生対応拡張
-- マルチプレイヤー学習
-- 先生・保護者向けダッシュボード
+- 3-6年生対応拡張（中学年・高学年カリキュラム）
+- 先生・保護者向け学習分析ダッシュボード
+- PWA化による完全オフライン対応
+- 多言語対応（英語UI・中国語圏対応）
 
 ## 📄 ライセンス
 
@@ -183,6 +224,34 @@ MIT License - 教育目的での自由な利用を推奨します。
 
 ---
 
-🎯 **目標**: すべての子どもたちが楽しく効果的に学習できる環境を提供する
+## 💭 プロジェクトへの思い
+
+### 🎯 開発動機
+このプロジェクトは、「すべての子どもたちが質の高い学習体験にアクセスできる世界を作りたい」という思いから始まりました。教育格差の解消と、一人ひとりの学習スタイルに合わせた個別最適化された学習環境の提供を目指しています。
+
+### 🌟 教育哲学
+- **個別化学習**: 子ども一人ひとりの学習ペースを尊重
+- **多感覚学習**: 視覚・聴覚・運動感覚を統合した学習体験
+- **段階的習得**: 基礎から応用まで無理のない学習進行
+- **内発的動機**: ゲーミフィケーションによる学習への興味喚起
+- **現代対応**: デジタル時代に必要なリテラシー教育も包含
+
+### 💻 技術への取り組み
+約6ヶ月の開発期間で、5,000行から15,000行へと成長したこのシステム。単なる問題集アプリではなく、教育工学に基づいた包括的な学習プラットフォームとして設計しました。
+
+各学習システムは教育理論に基づき：
+- **さくらんぼ計算**による算数の概念理解促進
+- **視覚的サポート**による学習のつまずき解消
+- **段階的難易度調整**による確実な習得
+- **即時フィードバック**による学習意欲維持
+
+### 🌈 未来への展望
+このプラットフォームが、世界中の子どもたちにとって「学ぶことの楽しさ」を発見する場所になることを願っています。技術の力で教育の可能性を広げ、すべての子どもたちが自信を持って学習に取り組める環境を提供し続けます。
+
+---
+
+🎯 **Mission**: すべての子どもたちが楽しく効果的に学習できる環境を提供する
 
 🌟 **Vision**: テクノロジーの力で教育の質を向上させ、学習の喜びを届ける
+
+💡 **Values**: 個別化・包括性・革新性・アクセシビリティ
