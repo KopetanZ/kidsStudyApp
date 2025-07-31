@@ -339,7 +339,8 @@ export const generateMoneyVisual = (question: Question): string => {
 
     // 実際の硬貨画像があるかチェック
     const coinImagePath = `/images/coins/${coin.value}yen.png`;
-    const useImage = false; // 画像が配置されたらtrueに変更
+    //const useImage = false; // 画像が配置されたらtrueに変更
+    const useImage = true; // 画像が配置されたらtrueに変更
 
     return `
       <div class="bg-green-50 rounded-2xl p-6 mb-4">
@@ -379,7 +380,7 @@ export const generateMoneyVisual = (question: Question): string => {
         <div class="flex justify-center mb-6">
           ${Array.from({ length: count }, (_, i) => {
             const coinImagePath = `/images/coins/${coin.value}yen.png`;
-            const useImage = false; // 画像が配置されたらtrueに変更
+            const useImage = true; // 画像が配置されたらtrueに変更
             
             return `
               <div class="bg-white rounded-full p-4 shadow-lg border-2 border-blue-200 w-20 h-20 flex items-center justify-center mx-1">
@@ -425,7 +426,7 @@ export const generateMoneyVisual = (question: Question): string => {
                 <div class="flex justify-center mb-2">
                   ${Array.from({ length: group.count }, () => {
                     const coinImagePath = `/images/coins/${group.value}yen.png`;
-                    const useImage = false; // 画像が配置されたらtrueに変更
+                    const useImage = true; // 画像が配置されたらtrueに変更
                     
                     return `
                       <div class="bg-white rounded-full p-2 shadow-lg border-2 border-yellow-200 w-16 h-16 flex items-center justify-center mx-1">
