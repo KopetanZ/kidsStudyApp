@@ -2,6 +2,7 @@ import { UserProgress, Badge } from '@/types';
 import { GamificationManager } from './gamification';
 
 const STORAGE_KEY = 'kids-study-progress';
+const SETTINGS_KEY = 'kids-study-settings';
 
 export class StorageManager {
   static getProgress(): UserProgress {
@@ -195,6 +196,41 @@ export class StorageManager {
     }
     
     return progress;
+  }
+
+  // Settings management
+  static getSettings(): any {
+    if (typeof window === 'undefined') return this.getDefaultSettings();
+    
+    try {
+      const settings = localStorage.getItem(SETTINGS_KEY);
+      return settings ? JSON.parse(settings) : this.getDefaultSettings();
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+      return this.getDefaultSettings();
+    }
+  }
+
+  static updateSettings(newSettings: any): void {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      const currentSettings = this.getSettings();
+      const updatedSettings = { ...currentSettings, ...newSettings };
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(updatedSettings));
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+    }
+  }
+
+  private static getDefaultSettings(): any {
+    return {
+      muteOverride: false,
+      silentSwitchDetection: true,
+      soundVolume: 1.0,
+      speechRate: 0.8,
+      notifications: true
+    };
   }
 }
 

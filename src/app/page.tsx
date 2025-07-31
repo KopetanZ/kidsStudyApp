@@ -12,12 +12,14 @@ import { UserProgress } from '@/types';
 import Link from 'next/link';
 import AchievementCenter from '@/components/AchievementCenter';
 import AccessibilitySettingsComponent from '@/components/AccessibilitySettings';
+import UserSettings from '@/components/UserSettings';
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
   const [soundManager, setSoundManager] = useState<SoundManager | null>(null);
   const [showAchievementCenter, setShowAchievementCenter] = useState(false);
   const [showAccessibilitySettings, setShowAccessibilitySettings] = useState(false);
+  const [showUserSettings, setShowUserSettings] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -47,6 +49,11 @@ export default function Home() {
   const handleAccessibilityOpen = () => {
     soundManager?.playSound('click');
     setShowAccessibilitySettings(true);
+  };
+
+  const handleUserSettingsOpen = () => {
+    soundManager?.playSound('click');
+    setShowUserSettings(true);
   };
 
   const currentSeasonalEvent = AdvancedGamificationManager.getCurrentSeasonalEvent();
@@ -395,6 +402,17 @@ export default function Home() {
               <div className="text-sm opacity-90">保護者向け進捗報告書</div>
             </div>
           </button>
+
+          <button
+            onClick={handleUserSettingsOpen}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">⚙️</span>
+            <div className="text-left">
+              <div className="text-lg">設定</div>
+              <div className="text-sm opacity-90">音声・ミュート・表示設定</div>
+            </div>
+          </button>
         </div>
 
         {/* Fun Footer */}
@@ -420,6 +438,11 @@ export default function Home() {
       {/* Accessibility Settings Modal */}
       {showAccessibilitySettings && (
         <AccessibilitySettingsComponent onClose={() => setShowAccessibilitySettings(false)} />
+      )}
+
+      {/* User Settings Modal */}
+      {showUserSettings && (
+        <UserSettings isOpen={showUserSettings} onClose={() => setShowUserSettings(false)} />
       )}
     </div>
   );
