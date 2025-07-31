@@ -14,6 +14,7 @@ import { ScienceQuestionGenerator, generateScienceVisual } from '@/lib/science-g
 import { VocabularyQuestionGenerator, generateVocabularyVisual } from '@/lib/vocabulary-generator';
 import { ProgrammingQuestionGenerator, generateProgrammingVisual } from '@/lib/programming-generator';
 import { DigitalLiteracyQuestionGenerator, generateDigitalLiteracyVisual } from '@/lib/digital-literacy-generator';
+import { TriviaQuestionGenerator, generateTriviaVisual } from '@/lib/trivia-generator';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
@@ -72,6 +73,8 @@ export default function LevelPage() {
         questions = ProgrammingQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else if (levelId.includes('literacy')) {
         questions = DigitalLiteracyQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('trivia-')) {
+        questions = TriviaQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else {
         questions = MathQuestionGenerator.generateQuestionsByLevelId(levelId);
       }
@@ -515,6 +518,9 @@ export default function LevelPage() {
               {(currentQuestion.subtype?.includes('digital-literacy')) && (
                 <div dangerouslySetInnerHTML={{ __html: generateDigitalLiteracyVisual(currentQuestion) }} />
               )}
+              {(currentQuestion.subtype === 'trivia-quiz') && (
+                <div dangerouslySetInnerHTML={{ __html: generateTriviaVisual(currentQuestion) }} />
+              )}
             </div>
 
             {/* Question with enhanced styling */}
@@ -540,6 +546,7 @@ export default function LevelPage() {
                   currentQuestion.type === 'english' ? 'bg-green-100 text-green-800 border-2 border-green-200' :
                   currentQuestion.subtype === 'time-reading' ? 'bg-purple-100 text-purple-800 border-2 border-purple-200' :
                   currentQuestion.subtype?.includes('shape') ? 'bg-orange-100 text-orange-800 border-2 border-orange-200' :
+                  currentQuestion.subtype === 'trivia-quiz' ? 'bg-yellow-100 text-yellow-800 border-2 border-yellow-200' :
                   'bg-gray-100 text-gray-800 border-2 border-gray-200'
                 }`}>
                   <span className="text-lg">
@@ -548,6 +555,7 @@ export default function LevelPage() {
                      currentQuestion.type === 'english' ? '🇺🇸' :
                      currentQuestion.subtype === 'time-reading' ? '🕐' :
                      currentQuestion.subtype?.includes('shape') ? '🔺' : 
+                     currentQuestion.subtype === 'trivia-quiz' ? '🤔' :
                      '📚'}
                   </span>
                   <span className="font-bold">
@@ -556,6 +564,7 @@ export default function LevelPage() {
                      currentQuestion.type === 'english' ? '英語' :
                      currentQuestion.subtype === 'time-reading' ? '時計' :
                      currentQuestion.subtype?.includes('shape') ? '図形' :
+                     currentQuestion.subtype === 'trivia-quiz' ? 'まめちしき' :
                      '学習'}
                   </span>
                   <Zap size={16} className="text-yellow-500" />

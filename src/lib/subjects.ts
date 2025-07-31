@@ -84,6 +84,13 @@ export const subjects: Subject[] = [
     emoji: '📱',
     color: 'from-emerald-400 to-emerald-600',
     description: 'あんぜんにつかうほうほうをまなぼう！'
+  },
+  {
+    id: 'trivia',
+    name: 'まめちしき',
+    emoji: '🤔',
+    color: 'from-yellow-400 to-orange-600',
+    description: 'おもしろい まめちしきを まなぼう！'
   }
 ];
 
@@ -708,8 +715,92 @@ export const digitalLiteracyLevels: Level[] = [
   }
 ];
 
+export const triviaLevels: Level[] = [
+  {
+    id: 'trivia-beginner',
+    subjectId: 'trivia',
+    name: 'はじめての まめちしき',
+    description: 'かんたんで たのしい まめちしきクイズ',
+    difficulty: 1,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'trivia-animals',
+    subjectId: 'trivia',
+    name: 'どうぶつの ひみつ',
+    description: 'どうぶつの おもしろい ひみつを しろう',
+    difficulty: 2,
+    requiredPoints: 100,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-nature',
+    subjectId: 'trivia',
+    name: 'しぜんの ふしぎ',
+    description: 'しぜんの ふしぎな できごとを まなぼう',
+    difficulty: 2,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-space',
+    subjectId: 'trivia',
+    name: 'うちゅうの なぞ',
+    description: 'うちゅうの おどろきの じじつを はっけん',
+    difficulty: 3,
+    requiredPoints: 200,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-body',
+    subjectId: 'trivia',
+    name: 'からだの ひみつ',
+    description: 'にんげんの からだの すごい ひみつ',
+    difficulty: 2,
+    requiredPoints: 120,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-food',
+    subjectId: 'trivia',
+    name: 'たべものの ひみつ',
+    description: 'たべものの びっくりする はなし',
+    difficulty: 2,
+    requiredPoints: 140,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-science',
+    subjectId: 'trivia',
+    name: 'かがくの ふしぎ',
+    description: 'かがくの おもしろい はっけん',
+    difficulty: 3,
+    requiredPoints: 250,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-world',
+    subjectId: 'trivia',
+    name: 'せかいの おもしろばなし',
+    description: 'せかいじゅうの おもしろい じじつ',
+    difficulty: 2,
+    requiredPoints: 180,
+    isUnlocked: false
+  },
+  {
+    id: 'trivia-advanced',
+    subjectId: 'trivia',
+    name: 'はかせ レベル',
+    description: 'むずかしい まめちしきに ちょうせん',
+    difficulty: 3,
+    requiredPoints: 300,
+    isUnlocked: false
+  }
+];
+
 export const getAllLevels = (): Level[] => {
-  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels, ...programmingLevels, ...digitalLiteracyLevels];
+  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels, ...programmingLevels, ...digitalLiteracyLevels, ...triviaLevels];
 };
 
 export const getLevelsBySubject = (subjectId: string): Level[] => {
@@ -738,6 +829,8 @@ export const getLevelsBySubject = (subjectId: string): Level[] => {
       return programmingLevels;
     case 'digital-literacy':
       return digitalLiteracyLevels;
+    case 'trivia':
+      return triviaLevels;
     default:
       return [];
   }
