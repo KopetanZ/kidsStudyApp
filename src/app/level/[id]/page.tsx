@@ -15,6 +15,8 @@ import { VocabularyQuestionGenerator, generateVocabularyVisual } from '@/lib/voc
 import { ProgrammingQuestionGenerator, generateProgrammingVisual } from '@/lib/programming-generator';
 import { DigitalLiteracyQuestionGenerator, generateDigitalLiteracyVisual } from '@/lib/digital-literacy-generator';
 import { TriviaQuestionGenerator, generateTriviaVisual } from '@/lib/trivia-generator';
+import { PokemonQuestionGenerator } from '@/lib/pokemon-question-generator';
+import { PokemonAchievementSystem } from '@/lib/pokemon-achievement-system';
 import { StorageManager } from '@/lib/storage';
 import { SoundManager } from '@/lib/sound';
 import { VisualEffects } from '@/lib/visual-effects';
@@ -80,6 +82,8 @@ export default function LevelPage() {
         questions = DigitalLiteracyQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else if (levelId.startsWith('trivia-')) {
         questions = TriviaQuestionGenerator.generateQuestionsByLevelId(levelId);
+      } else if (levelId.startsWith('pokemon-')) {
+        questions = await PokemonQuestionGenerator.generateQuestionsByLevelId(levelId);
       } else {
         questions = MathQuestionGenerator.generateQuestionsByLevelId(levelId);
       }
@@ -334,7 +338,7 @@ export default function LevelPage() {
     setShowDrawingCanvas(false);
   };
 
-  const completeLevel = (finalSession: GameSession) => {
+  const completeLevel = async (finalSession: GameSession) => {
     const completedSession = {
       ...finalSession,
       completed: true,
@@ -344,7 +348,27 @@ export default function LevelPage() {
     setSession(completedSession);
     
     // Save completion
-    const newProgress = StorageManager.completeLevel(levelId);
+    let newProgress = StorageManager.completeLevel(levelId);
+    
+    // Check for Pokemon achievements
+    const pokemonSystem = PokemonAchievementSystem.getInstance();
+    const pokemonRewards = await pokemonSystem.checkAndAwardBadges(newProgress);
+    
+    // Check for level completion reward
+    const levelReward = await pokemonSystem.getLevelCompletionReward(
+      levelId, 
+      (completedSession.correctAnswers / completedSession.questions.length) * 100
+    );
+    
+    if (levelReward) {
+      pokemonRewards.push(levelReward);
+    }
+    
+    // Update progress again if Pokemon rewards were added
+    if (pokemonRewards.length > 0) {
+      newProgress = StorageManager.getProgress();
+    }
+    
     setProgress(newProgress);
     
     // Play celebration sound and speak completion
@@ -395,6 +419,203 @@ export default function LevelPage() {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleAnswerSubmit();
+    }
+  };
+
+  const renderPokemonVisual = (question: Question) => {
+    if (!question.visualAid) return null;
+
+    const content = question.visualAid.content as any;
+
+    switch (question.visualAid.type) {
+      case 'pokemon-comparison':
+        return (
+          <div className="flex items-center justify-center gap-8 mb-6">
+            <div className="text-center">
+              <img 
+                src={content.pokemon1?.image || ''} 
+                alt={content.pokemon1?.name || ''} 
+                className="w-24 h-24 mx-auto mb-2"
+              />
+              <div className="font-bold text-lg">{content.pokemon1?.name}</div>
+              <div className="text-sm text-gray-600">
+                {content.comparisonType === 'height' ? `${content.pokemon1?.height}cm` : `${content.pokemon1?.weight}kg`}
+              </div>
+            </div>
+            <div className="text-4xl">VS</div>
+            <div className="text-center">
+              <img 
+                src={content.pokemon2?.image || ''} 
+                alt={content.pokemon2?.name || ''} 
+                className="w-24 h-24 mx-auto mb-2"
+              />
+              <div className="font-bold text-lg">{content.pokemon2?.name}</div>
+              <div className="text-sm text-gray-600">
+                {content.comparisonType === 'height' ? `${content.pokemon2?.height}cm` : `${content.pokemon2?.weight}kg`}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'pokemon-math':
+        return (
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="text-center">
+              <img 
+                src={content.pokemon1?.image || ''} 
+                alt={content.pokemon1?.name || ''} 
+                className="w-20 h-20 mx-auto mb-1"
+              />
+              <div className="text-sm font-bold">{content.pokemon1?.weight}kg</div>
+            </div>
+            <div className="text-3xl">+</div>
+            <div className="text-center">
+              <img 
+                src={content.pokemon2?.image || ''} 
+                alt={content.pokemon2?.name || ''} 
+                className="w-20 h-20 mx-auto mb-1"
+              />
+              <div className="text-sm font-bold">{content.pokemon2?.weight}kg</div>
+            </div>
+            <div className="text-3xl">=</div>
+            <div className="text-3xl font-bold text-blue-600">?</div>
+          </div>
+        );
+
+      case 'pokemon-type-quiz':
+        return (
+          <div className="text-center mb-6">
+            <img 
+              src={content.pokemon?.image || ''} 
+              alt={content.pokemon?.name || ''} 
+              className="w-32 h-32 mx-auto mb-4"
+            />
+            <div className="text-xl font-bold mb-2">{content.pokemon?.name}</div>
+          </div>
+        );
+
+      case 'pokemon-name-quiz':
+        return (
+          <div className="text-center mb-6">
+            <img 
+              src={content.pokemon?.image || ''} 
+              alt={content.pokemon?.name || ''} 
+              className="w-32 h-32 mx-auto mb-4"
+            />
+            {content.showName && (
+              <div className="text-2xl font-bold mb-2">{content.pokemon?.name}</div>
+            )}
+            {content.pokemon?.cry && (
+              <button
+                onClick={() => {
+                  const audio = new Audio(content.pokemon.cry);
+                  audio.volume = 0.5;
+                  audio.play().catch(console.error);
+                }}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg mb-4"
+              >
+                🔊 鳴き声を聞く
+              </button>
+            )}
+          </div>
+        );
+
+      case 'pokemon-english-quiz':
+        return (
+          <div className="text-center mb-6">
+            <img 
+              src={content.pokemon?.image || ''} 
+              alt={content.pokemon?.japanese || ''} 
+              className="w-32 h-32 mx-auto mb-4"
+            />
+            <div className="text-xl font-bold mb-2">{content.pokemon?.japanese}</div>
+            {content.pokemon?.cry && (
+              <button
+                onClick={() => {
+                  const audio = new Audio(content.pokemon.cry);
+                  audio.volume = 0.5;
+                  audio.play().catch(console.error);
+                }}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+              >
+                🔊 鳴き声を聞く
+              </button>
+            )}
+          </div>
+        );
+
+      case 'pokemon-evolution':
+        return (
+          <div className="flex items-center justify-center gap-6 mb-6">
+            <div className="text-center">
+              <img 
+                src={content.basePokemon?.image || ''} 
+                alt={content.basePokemon?.name || ''} 
+                className="w-24 h-24 mx-auto mb-2"
+              />
+              <div className="font-bold">{content.basePokemon?.name}</div>
+            </div>
+            <div className="text-4xl">→</div>
+            <div className="text-center">
+              <div className="w-24 h-24 mx-auto mb-2 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                <span className="text-2xl">?</span>
+              </div>
+              <div className="font-bold text-gray-500">???</div>
+            </div>
+          </div>
+        );
+
+      case 'pokemon-cry-quiz':
+        return (
+          <div className="text-center mb-6">
+            <div className="bg-blue-100 rounded-lg p-6 mb-4">
+              <div className="text-4xl mb-4">🔊</div>
+              <button
+                onClick={() => {
+                  const audio = new Audio(content.audioUrl);
+                  audio.volume = 0.5;
+                  audio.play().catch(console.error);
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-bold"
+              >
+                鳴き声を再生
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              {content.options?.slice(0, 4).map((option: any, index: number) => (
+                <div key={index} className="text-center p-2 border rounded-lg">
+                  <img 
+                    src={option.image || ''} 
+                    alt={option.name || ''} 
+                    className="w-16 h-16 mx-auto mb-1"
+                  />
+                  <div className="text-sm font-semibold">{option.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 'pokemon-legendary-quiz':
+        return (
+          <div className="text-center mb-6">
+            <div className="relative">
+              <img 
+                src={content.pokemon?.image || ''} 
+                alt={content.pokemon?.name || ''} 
+                className="w-40 h-40 mx-auto mb-4 filter brightness-0"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-yellow-400 opacity-30 rounded-lg"></div>
+              {content.specialEffect && (
+                <div className="absolute inset-0 animate-pulse bg-yellow-200 opacity-50 rounded-lg"></div>
+              )}
+            </div>
+            <div className="text-sm text-gray-600 mb-2">シルエットクイズ</div>
+          </div>
+        );
+
+      default:
+        return null;
     }
   };
 
@@ -579,6 +800,11 @@ export default function LevelPage() {
               )}
               {(currentQuestion.subtype === 'trivia-quiz') && (
                 <div dangerouslySetInnerHTML={{ __html: generateTriviaVisual(currentQuestion) }} />
+              )}
+              {currentQuestion.visualAid?.type?.includes('pokemon') && (
+                <div className="pokemon-visual-aid">
+                  {renderPokemonVisual(currentQuestion)}
+                </div>
               )}
             </div>
 

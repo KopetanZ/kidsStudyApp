@@ -91,6 +91,13 @@ export const subjects: Subject[] = [
     emoji: '🤔',
     color: 'from-yellow-400 to-orange-600',
     description: 'おもしろい まめちしきを まなぼう！'
+  },
+  {
+    id: 'pokemon',
+    name: 'ポケモン',
+    emoji: '📚',
+    color: 'from-red-400 to-yellow-600',
+    description: 'ポケモンと一緒に楽しく学ぼう！'
   }
 ];
 
@@ -950,8 +957,74 @@ export const triviaLevels: Level[] = [
   }
 ];
 
+export const pokemonLevels: Level[] = [
+  {
+    id: 'pokemon-math-basic',
+    subjectId: 'pokemon',
+    name: 'ポケモン算数',
+    description: 'ポケモンの身長・体重で算数を学ぼう',
+    difficulty: 2,
+    requiredPoints: 0,
+    isUnlocked: true
+  },
+  {
+    id: 'pokemon-types',
+    subjectId: 'pokemon',
+    name: 'ポケモンタイプ',
+    description: 'ポケモンのタイプを覚えよう',
+    difficulty: 1,
+    requiredPoints: 50,
+    isUnlocked: false
+  },
+  {
+    id: 'pokemon-reading',
+    subjectId: 'pokemon',
+    name: 'ポケモンよみかた',
+    description: 'ポケモンの名前をひらがなで書こう',
+    difficulty: 2,
+    requiredPoints: 100,
+    isUnlocked: false
+  },
+  {
+    id: 'pokemon-english',
+    subjectId: 'pokemon',
+    name: 'ポケモン英語',
+    description: 'ポケモンの英語名を覚えよう',
+    difficulty: 3,
+    requiredPoints: 150,
+    isUnlocked: false
+  },
+  {
+    id: 'pokemon-evolution',
+    subjectId: 'pokemon',
+    name: 'ポケモン進化',
+    description: 'ポケモンの進化チェーンを学ぼう',
+    difficulty: 3,
+    requiredPoints: 200,
+    isUnlocked: false
+  },
+  {
+    id: 'pokemon-cries',
+    subjectId: 'pokemon',
+    name: 'ポケモンの鳴き声',
+    description: '鳴き声でポケモンを当てよう',
+    difficulty: 4,
+    requiredPoints: 250,
+    isUnlocked: false
+  },
+  {
+    id: 'pokemon-mixed',
+    subjectId: 'pokemon',
+    name: 'ポケモンミックス',
+    description: 'すべての問題をミックス！',
+    difficulty: 4,
+    requiredPoints: 300,
+    isUnlocked: false
+  }
+];
+
 export const getAllLevels = (): Level[] => {
-  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels, ...programmingLevels, ...digitalLiteracyLevels, ...triviaLevels];
+  return [...mathLevels, ...japaneseLevels, ...englishLevels, ...timeLevels, ...shapeLevels, ...moneyLevels, ...readingLevels, ...timeCalcLevels, ...scienceLevels, ...vocabularyLevels, ...programmingLevels, ...digitalLiteracyLevels, ...triviaLevels, ...pokemonLevels];
 };
 
 export const getLevelsBySubject = (subjectId: string): Level[] => {
@@ -982,6 +1055,8 @@ export const getLevelsBySubject = (subjectId: string): Level[] => {
       return digitalLiteracyLevels;
     case 'trivia':
       return triviaLevels;
+    case 'pokemon':
+      return pokemonLevels;
     default:
       return [];
   }

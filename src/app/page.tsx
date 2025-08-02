@@ -18,6 +18,9 @@ import AdaptiveLearningDashboard from '@/components/AdaptiveLearningDashboard';
 import DetailedParentReport from '@/components/DetailedParentReport';
 import MultiplayerLobby from '@/components/MultiplayerLobby';
 import MultiplayerGame from '@/components/MultiplayerGame';
+import PokemonCollection from '@/components/PokemonCollection';
+import PokemonRewardModal from '@/components/PokemonRewardModal';
+import { PokemonAchievementSystem, PokemonReward } from '@/lib/pokemon-achievement-system';
 
 export default function Home() {
   const [progress, setProgress] = useState<UserProgress | null>(null);
@@ -30,6 +33,8 @@ export default function Home() {
   const [showDetailedParentReport, setShowDetailedParentReport] = useState(false);
   const [showMultiplayerLobby, setShowMultiplayerLobby] = useState(false);
   const [multiplayerGameSession, setMultiplayerGameSession] = useState<string | null>(null);
+  const [showPokemonCollection, setShowPokemonCollection] = useState(false);
+  const [pokemonReward, setPokemonReward] = useState<PokemonReward | null>(null);
   const [userId] = useState(`user-${Date.now()}`);
 
   useEffect(() => {
@@ -43,6 +48,22 @@ export default function Home() {
 
       // Initialize accessibility
       AccessibilityManager.initialize();
+
+      // Check for Pokemon achievements
+      const pokemonSystem = PokemonAchievementSystem.getInstance();
+      const rewards = await pokemonSystem.checkAndAwardBadges(userProgress);
+      if (rewards.length > 0) {
+        // Show first reward (could be extended to show all)
+        setPokemonReward(rewards[0]);
+        // Update progress after award
+        setProgress(StorageManager.getProgress());
+      }
+
+      // Check for daily Pokemon reward
+      const dailyReward = await pokemonSystem.getDailyPokemonReward();
+      if (dailyReward && !pokemonReward) {
+        setPokemonReward(dailyReward);
+      }
     };
 
     initializeApp();
@@ -103,6 +124,16 @@ export default function Home() {
   const handleMultiplayerClose = () => {
     setShowMultiplayerLobby(false);
     setMultiplayerGameSession(null);
+  };
+
+  const handlePokemonCollectionOpen = () => {
+    soundManager?.playSound('click');
+    setShowPokemonCollection(true);
+  };
+
+  const handlePokemonRewardClose = () => {
+    setPokemonReward(null);
+    soundManager?.playSound('celebration');
   };
 
   if (!progress) {
@@ -185,7 +216,7 @@ export default function Home() {
           </div>
           
           {/* Stats Display */}
-          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3">
             <div className="bg-yellow-100 rounded-xl p-3 shadow-lg">
               <div className="text-2xl mb-1">⭐</div>
               <div className="text-lg font-bold text-yellow-700">{progress.totalPoints}</div>
@@ -207,6 +238,13 @@ export default function Home() {
                 {Math.max(...Object.values(progress.streaks), 0)}
               </div>
               <div className="text-xs text-green-600">最高連続</div>
+            </div>
+            <div className="bg-red-100 rounded-xl p-3 shadow-lg">
+              <div className="text-2xl mb-1">📚</div>
+              <div className="text-lg font-bold text-red-700">
+                {progress.pokemonCollection?.length || 0}
+              </div>
+              <div className="text-xs text-red-600">ポケモン</div>
             </div>
           </div>
         </header>
@@ -406,6 +444,19 @@ export default function Home() {
               <div className="text-sm opacity-90">友達と一緒に学習バトル</div>
             </div>
           </button>
+
+          <button
+            onClick={handlePokemonCollectionOpen}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-red-500 to-yellow-600 hover:from-red-600 hover:to-yellow-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          >
+            <span className="text-2xl">📚</span>
+            <div className="text-left">
+              <div className="text-lg">ポケモン図鑑</div>
+              <div className="text-sm opacity-90">
+                {progress.pokemonCollection?.length || 0}匹 捕獲済み
+              </div>
+            </div>
+          </button>
         </div>
 
         {/* Fun Footer */}
@@ -468,6 +519,19 @@ export default function Home() {
           userId={userId}
           onGameEnd={handleMultiplayerGameEnd}
           onClose={handleMultiplayerClose}
+        />
+      )}
+
+      {/* Pokemon Collection */}
+      {showPokemonCollection && (
+        <PokemonCollection onClose={() => setShowPokemonCollection(false)} />
+      )}
+
+      {/* Pokemon Reward Modal */}
+      {pokemonReward && (
+        <PokemonRewardModal
+          reward={pokemonReward}
+          onClose={handlePokemonRewardClose}
         />
       )}
     </div>
